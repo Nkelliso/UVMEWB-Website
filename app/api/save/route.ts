@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { savePageData } from "@/lib/store";
 import { isEditablePage } from "@/lib/pages";
+import { isAuthed } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
-  const store = await cookies();
-  if (!store.get("ewb_auth")) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

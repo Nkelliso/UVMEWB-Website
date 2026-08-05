@@ -1,13 +1,12 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { saveOfficers, saveProjects, saveSponsors, saveSettings } from "@/lib/store";
+import { isAuthed } from "@/lib/auth";
 import type { OfficerBoard, Project, Sponsor, SiteSettings } from "@/lib/types";
 
 async function requireAuth() {
-  const store = await cookies();
-  if (!store.get("ewb_auth")) throw new Error("Unauthorized");
+  if (!(await isAuthed())) throw new Error("Unauthorized");
 }
 
 export async function saveOfficersAction(board: OfficerBoard) {

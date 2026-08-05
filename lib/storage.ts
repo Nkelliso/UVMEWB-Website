@@ -21,8 +21,36 @@ const UPLOAD_DIR = path.join(process.cwd(), "public", "photos", "uploads");
 const UPLOAD_URL_BASE = "/photos/uploads";
 const IMG_RE = /\.(jpe?g|png|webp|avif)$/i;
 
-function safeName(filename: string): string {
-  const ext = (path.extname(filename) || ".jpg").toLowerCase();
+const MIME_EXT: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/avif": ".avif",
+};
+
+/** Detect image type from magic bytes — never trust the client's declared type
+ *  or filename extension. Returns a whitelisted MIME or null (reject). */
+export function sniffImageType(buf: Buffer): string | null {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47)
+    return "image/png";
+  if (
+    buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
+    buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50
+  )
+    return "image/webp";
+  if (buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) {
+    const brand = buf.toString("ascii", 8, 12);
+    if (brand === "avif" || brand === "avis") return "image/avif";
+  }
+  return null;
+}
+
+/** Filename derived from the VALIDATED content type — extension can't be spoofed
+ *  (no .svg/.html reaching the served folder). */
+function safeName(filename: string, contentType?: string): string {
+  const ext = MIME_EXT[contentType ?? ""] || ".jpg";
   const base =
     path
       .basename(filename, path.extname(filename))
@@ -38,7 +66,7 @@ export async function saveImage(
   filename: string,
   contentType?: string
 ): Promise<{ url: string }> {
-  const name = safeName(filename);
+  const name = safeName(filename, contentType);
   const client = writeClient();
   if (isSupabaseConfigured() && client) {
     const { error } = await client.storage.from(BUCKET).upload(name, bytes, {

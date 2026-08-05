@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { saveImage } from "@/lib/storage";
+import { saveImage, sniffImageType } from "@/lib/storage";
+import { isAuthed } from "@/lib/auth";
 
-// Auth-gated image upload. Receives the already-edited image (crop + color are
-// baked in the browser) as multipart/form-data and persists via the storage
-// adapter (dev disk or Supabase Storage). Mirrors the auth check in api/save.
+// Auth-gated image upload. The image is validated by magic bytes (not the
+// client-declared type or filename), size-capped, and stored with an extension
+// derived from the detected type — so no SVG/HTML/oversized files get through.
+const MAX_BYTES = 8 * 1024 * 1024; // 8 MB
+
 export async function POST(request: NextRequest) {
-  const store = await cookies();
-  if (!store.get("ewb_auth")) {
+  if (!(await isAuthed())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -16,10 +17,20 @@ export async function POST(request: NextRequest) {
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
+  if (file.size > MAX_BYTES) {
+    return NextResponse.json({ error: "Image too large (max 8 MB)" }, { status: 413 });
+  }
 
   try {
     const bytes = Buffer.from(await file.arrayBuffer());
-    const { url } = await saveImage(bytes, file.name || "photo.jpg", file.type);
+    const mime = sniffImageType(bytes);
+    if (!mime) {
+      return NextResponse.json(
+        { error: "Unsupported or invalid image (JPEG, PNG, WebP, or AVIF only)" },
+        { status: 415 }
+      );
+    }
+    const { url } = await saveImage(bytes, file.name || "photo", mime);
     return NextResponse.json({ ok: true, url });
   } catch (e) {
     console.error(e);
