@@ -1,0 +1,37 @@
+/* EWB-UVM · Stevens-studied re-skin — portable design tokens.
+ * Live source of truth is app/stevens-theme.css (scoped under .theme-stevens).
+ * Structure/type-voice/rhythm studied from https://ducklink.stevens.edu/ewb/home/;
+ * colour dress is UVM green + gold (the source's brick red is deliberately NOT adopted).
+ *
+ * These extend the base UVM tokens in /tokens.css — only the values that the
+ * re-skin overrides are listed here. Everything else is inherited unchanged.
+ */
+:root {
+  /* colour — inherited from the base UVM system (unchanged) */
+  --paper: oklch(97% 0.008 95);
+  --paper-2: oklch(94% 0.012 95);
+  --ink: oklch(23% 0.03 158);
+  --ink-soft: oklch(45% 0.02 158);
+
+  --field: oklch(30% 0.055 158);
+  --field-2: oklch(36% 0.06 158);
+  --chalk: oklch(97% 0.01 95);
+  --chalk-soft: oklch(80% 0.02 130);
+
+  --green: oklch(52% 0.11 158);       /* primary */
+  --green-deep: oklch(42% 0.10 158);
+  --gold: oklch(80% 0.13 80);         /* secondary */
+  --gold-deep: oklch(70% 0.14 72);
+
+  --rule: oklch(88% 0.01 95);
+  --rule-dark: oklch(44% 0.04 158);
+
+  /* type — the re-skin's voice: light geometric display over humanist body */
+  --font-display: "Poppins", system-ui, sans-serif;   /* was Manrope */
+  --font-body: "Nunito Sans", system-ui, sans-serif;  /* unchanged */
+  --stevens-display-weight: 300;                       /* light, per the source */
+
+  /* colored stat/statement band flood (UVM green — NOT the source's red) */
+  --stevens-flood: oklch(30% 0.055 158);
+  --stevens-flood-2: oklch(36% 0.06 158);
+}

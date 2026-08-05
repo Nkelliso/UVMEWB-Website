@@ -1,0 +1,26 @@
+/* EWB-UVM — design tokens (portable export).
+ * Live source of truth is app/globals.css.
+ */
+:root {
+  --paper: oklch(97% 0.008 95);
+  --paper-2: oklch(94% 0.012 95);
+  --ink: oklch(23% 0.03 158);
+  --ink-soft: oklch(45% 0.02 158);
+
+  --field: oklch(30% 0.055 158);
+  --field-2: oklch(36% 0.06 158);
+  --chalk: oklch(97% 0.01 95);
+  --chalk-soft: oklch(80% 0.02 130);
+
+  --green: oklch(52% 0.11 158);
+  --green-deep: oklch(42% 0.10 158);
+
+  --gold: oklch(80% 0.13 80);
+  --gold-deep: oklch(70% 0.14 72);
+
+  --rule: oklch(88% 0.01 95);
+  --rule-dark: oklch(44% 0.04 158);
+
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-body: "Nunito Sans", system-ui, sans-serif;
+}

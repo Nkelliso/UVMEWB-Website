@@ -1,0 +1,80 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+ * tokens.immersive.css — portable token layer for the IMMERSIVE re-skin
+ * ───────────────────────────────────────────────────────────────────────────
+ * Hallmark · theme: studied-DNA (EWB Cal Poly, https://www.ewb.calpoly.edu/)
+ *   dressed in UVM forest green + warm gold. studied: yes · DNA-source: url + screenshots
+ * Macrostructure: Photographic Stack · display voice: Montserrat (uppercase, tracked)
+ *
+ * These are the EFFECTIVE tokens inside `.theme-immersive` — the base UVM system
+ * (see /tokens.css and app/globals.css :root) with the immersive overrides applied.
+ * The live source of truth is the `.theme-immersive` block in app/globals.css;
+ * this file is the portable copy for handoff to other tools.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.theme-immersive {
+  /* paper + ink (inherited from base UVM system) */
+  --paper: oklch(97% 0.008 95);
+  --paper-2: oklch(94% 0.012 95);
+  --ink: oklch(23% 0.03 158);
+  --ink-soft: oklch(45% 0.02 158);
+
+  /* dark field band — deepened for the photographic poster feel (OVERRIDE) */
+  --field: oklch(27% 0.062 158);
+  --field-2: oklch(33% 0.066 158);
+  --chalk: oklch(97% 0.01 95);
+  --chalk-soft: oklch(80% 0.02 130);
+
+  /* primary — UVM forest green (dress kept; source's white accent NOT adopted) */
+  --green: oklch(52% 0.11 158);
+  --green-deep: oklch(42% 0.10 158);
+
+  /* secondary accent — warm gold */
+  --gold: oklch(80% 0.13 80);
+  --gold-deep: oklch(70% 0.14 72);
+
+  /* rules */
+  --rule: oklch(88% 0.01 95);
+  --rule-dark: oklch(44% 0.04 158);
+
+  /* fonts — display swapped to the studied uppercase-geometric voice (OVERRIDE) */
+  --font-display: var(--font-immersive-display), "Montserrat", system-ui, sans-serif;
+  --font-body: var(--font-body), "Nunito Sans", system-ui, sans-serif;
+
+  /* spacing (inherited) */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 9rem;
+
+  /* type scale — poster-scale mega headline (OVERRIDE) */
+  --text-mega: clamp(3rem, 10vw, 8rem);
+  --text-display: clamp(2.25rem, 5.5vw, 4.5rem);
+  --text-h2: clamp(1.9rem, 4vw, 3rem);
+  --text-h3: 1.4rem;
+  --text-body: 1.0625rem;
+  --text-eyebrow: 0.75rem;
+
+  /* motion + shape — hard edges, studied site's boxy voice (radius OVERRIDE) */
+  --ease-out: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur: 0.35s;
+  --radius: 0;
+
+  /* immersive-only tokens */
+  --imm-track: 0.08em;
+  --imm-track-wide: 0.22em;
+  --poster-scrim: linear-gradient(
+    180deg,
+    oklch(20% 0.03 158 / 0.42) 0%,
+    oklch(18% 0.03 158 / 0.18) 38%,
+    oklch(14% 0.03 158 / 0.86) 100%
+  );
+  --poster-field: linear-gradient(
+    155deg,
+    oklch(30% 0.06 158) 0%,
+    oklch(24% 0.055 158) 55%,
+    oklch(20% 0.05 158) 100%
+  );
+}

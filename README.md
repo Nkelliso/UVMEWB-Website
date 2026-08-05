@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EWB-UVM Website
 
-## Getting Started
+The Engineers Without Borders — University of Vermont chapter website. Built to
+be **edited by future officers without touching code**: content lives in a
+database (Supabase) and is edited through a password-protected `/admin` area —
+a drag-and-drop page builder plus simple forms for officers, projects, and
+sponsors.
 
-First, run the development server:
+Design ported from the original Lovable concept
+(github.com/Nkelliso/uvm-ewb-scroll-page) and restyled with a chapter identity
+(UVM forest green + warm gold, Manrope/Nunito Sans). Same stack/pattern as the
+"home-field" project.
+
+## Stack
+
+- **Next.js 16** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS 4** + a hand-built design system (`app/globals.css`, `tokens.css`)
+- **Puck** (`@measured/puck`) — drag-and-drop page builder
+- **Supabase** (Postgres) — content persistence (optional in dev)
+
+## Run it locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # set ADMIN_PASSWORD; leave Supabase blank for now
+npm run dev                  # http://localhost:3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+With Supabase left blank, all content reads from `lib/seed.ts` and **edits save
+to JSON files under `/data`** — so the whole site and the editor work with zero
+setup. Default admin password in `.env.local` is `ewbuvm2026`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Editing the site (`/admin`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Go to `/login`, enter the admin password.
+2. **Page layouts** → drag-and-drop builder (Puck) for the Home / About /
+   Mission pages. Add sections, edit text, hit **Publish**.
+3. **Chapter content** → forms for the **Officer Board**, **Projects**,
+   **Sponsors**, and **Site Settings** (hero, tagline, contact email).
 
-## Learn More
+Hand the next webmaster the admin password — that's all they need.
 
-To learn more about Next.js, take a look at the following resources:
+## Going live (Supabase + deploy)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Create a free project at [supabase.com](https://supabase.com).
+2. SQL editor → run `supabase/schema.sql`.
+3. Project Settings → API → copy **Project URL**, **anon key**, **service_role
+   key** into `.env.local` (and into your Vercel env vars):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```
+   ADMIN_PASSWORD=...
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ```
+4. Deploy to Vercel. With Supabase set, edits from `/admin` update the live site
+   instantly. `/admin` shows a badge telling you whether you're in local-file or
+   live-Supabase mode.
 
-## Deploy on Vercel
+## Key files
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Path | What |
+|------|------|
+| `app/(site)/**` | Public pages |
+| `app/admin/**` | Editing backend (Puck + forms) |
+| `lib/store.ts` | Data access — Supabase, or JSON-file fallback |
+| `lib/seed.ts` | Default content (ported from Lovable) |
+| `lib/puck-config.tsx` | Drag-and-drop blocks |
+| `lib/pages.ts` | Page registry + nav builder |
+| `app/globals.css` | Design system (source of truth) |
+| `supabase/schema.sql` | Database schema + RLS |

@@ -1,0 +1,70 @@
+/* Hallmark · tokens.cornell.css — portable token set for the Cornell-DNA edition
+ * theme: studied-DNA (source: https://www.ewbcornell.org/) · dress: UVM green + gold
+ * display/body: Poppins · studied: yes
+ *
+ * The DNA (structure, type voice, hero treatment) came from ewbcornell.org; the
+ * colour dress is UVM's. Scope these under `.theme-cornell` (as the live build
+ * does) or drop them on `:root` to make the whole page speak this system.
+ */
+
+.theme-cornell {
+  /* paper + ink */
+  --paper: oklch(97% 0.008 95);
+  --paper-2: oklch(94% 0.012 95);
+  --ink: oklch(23% 0.03 158);
+  --ink-soft: oklch(45% 0.02 158);
+
+  /* dark "field" band — UVM deep forest green */
+  --field: oklch(30% 0.055 158);
+  --field-2: oklch(36% 0.06 158);
+  --chalk: oklch(97% 0.01 95);
+  --chalk-soft: oklch(80% 0.02 130);
+
+  /* primary — forest green (main) */
+  --green: oklch(52% 0.11 158);
+  --green-deep: oklch(42% 0.10 158);
+
+  /* accent — warm gold (secondary) */
+  --gold: oklch(80% 0.13 80);
+  --gold-deep: oklch(70% 0.14 72);
+
+  /* rules */
+  --rule: oklch(88% 0.01 95);
+  --rule-dark: oklch(44% 0.04 158);
+
+  /* Cornell-DNA additions */
+  --cornell-band: oklch(95% 0.01 150);          /* calm statement band */
+  --cornell-dark: oklch(16% 0.02 158);          /* solid nav base */
+  --cornell-nav-bg: oklch(16% 0.02 158 / 0.92); /* scroll-darkened nav */
+  --cornell-dropdown-bg: oklch(12% 0.02 158 / 0.97);
+  --cornell-scrim-1: oklch(14% 0.02 158 / 0.5); /* hero photo scrim, top */
+  --cornell-scrim-2: oklch(14% 0.02 158 / 0.12);/* hero photo scrim, mid */
+  --cornell-scrim-3: oklch(11% 0.02 158 / 0.78);/* hero photo scrim, bottom */
+  --cornell-hairline: oklch(97% 0.01 95 / 0.12);
+
+  /* fonts — Poppins (rounded geometric), single family */
+  --font-display: var(--font-cornell), "Poppins", system-ui, sans-serif;
+  --font-body: var(--font-cornell), "Poppins", system-ui, sans-serif;
+
+  /* spacing (4pt scale) */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 9rem;
+
+  /* type scale */
+  --text-mega: clamp(2.75rem, 8vw, 6.5rem);
+  --text-display: clamp(2.25rem, 5.5vw, 4.5rem);
+  --text-h2: clamp(1.9rem, 4vw, 3rem);
+  --text-h3: 1.4rem;
+  --text-body: 1.0625rem;
+  --text-eyebrow: 0.75rem;
+
+  /* motion + shape */
+  --ease-out: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur: 0.35s;
+  --radius: 0.5rem;
+}
