@@ -20,8 +20,13 @@ export const SEED_SETTINGS: SiteSettings = {
   chapterName: "Engineers Without Borders",
   tagline:
     "The University of Vermont student chapter — designing sustainable infrastructure alongside the communities we serve.",
-  contactEmail: "ewb@uvm.edu",
-  instagram: "",
+  contactEmail: "universityofvermontburlington@chapters-ewb-usa.org",
+  instagram: "https://www.instagram.com/uvmewb_usa/",
+  facebook: "",
+  linkedin:
+    "https://www.linkedin.com/company/engineers-without-borders-uvm/posts/?feedView=all",
+  sponsorshipPackageUrl: "/sponsorship-package.pdf",
+  logoUrl: "/logo.png",
   heroHeading: "Engineering that listens first.",
   heroSubline:
     "Student engineers, designers, and organizers at the University of Vermont, building lasting infrastructure with communities around the world.",

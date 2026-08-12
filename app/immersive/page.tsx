@@ -3,6 +3,11 @@ import { getProjects, getSettings } from "@/lib/store";
 
 const BASE = "/immersive";
 
+// Pronounced Cal-Poly-style parallax reveal — backgrounds travel slower than the
+// page so more of each photo is revealed as it scrolls in. 180 = the strong
+// reveal (auto-applies the .is-parallax bleed override past 120).
+const STRENGTH = 180;
+
 function shortName(title: string): string {
   return title.split("—")[0].split(",")[0].trim();
 }
@@ -23,6 +28,7 @@ export default async function ImmersiveHome() {
     <>
       <PosterSection
         variant="hero"
+        parallaxStrength={STRENGTH}
         image={settings.heroImages?.[0] || "/photos/hero.jpg"}
         eyebrow={`${settings.chapterName} · UVM`}
         title={settings.heroHeading}
@@ -36,6 +42,7 @@ export default async function ImmersiveHome() {
 
       <PosterSection
         align="left"
+        parallaxStrength={STRENGTH}
         image={img("projects", "/photos/projects.jpg")}
         title="Projects, near and far"
         strip={projectNames}
@@ -46,6 +53,7 @@ export default async function ImmersiveHome() {
 
       <PosterSection
         align="right"
+        parallaxStrength={STRENGTH}
         image={img("giving", "/photos/giving.jpg")}
         title="Giving"
         sub="Every gift trains the next generation of engineers while changing lives in the communities we serve."
@@ -56,6 +64,7 @@ export default async function ImmersiveHome() {
 
       <PosterSection
         short
+        parallaxStrength={STRENGTH}
         image={img("join", "/photos/join.jpg")}
         title="Join us"
         sub="Want to join the chapter, partner with us, or support a project? We'd love to hear from you."

@@ -20,23 +20,35 @@ export default function ImmersiveHeader({
   nav,
   brand,
   homeHref,
+  logoUrl,
 }: {
   nav: NavItem[];
   brand: string;
   homeHref: string;
+  logoUrl?: string;
 }) {
   const pathname = usePathname();
-  const overHero = pathname === homeHref; // only the immersive home has a full-height hero
   const [hidden, setHidden] = useState(false);
-  const [overDark, setOverDark] = useState(overHero);
+  const [overDark, setOverDark] = useState(true); // corrected on mount by measuring the top band
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const lastY = useRef(0);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setOverDark(overHero);
-    const onScroll = () => {
+    // Transparent while the page's opening photo band is still behind the header,
+    // then solid (deep green) once you scroll past it. Works on every immersive
+    // page — the full-height home hero or a shorter interior header — by measuring
+    // the first photo band inside <main>.
+    const measureBand = () => {
+      const band = document.querySelector(
+        "main .imm-poster, main .ewb-shell-head"
+      ) as HTMLElement | null;
+      return band ? band.offsetHeight : 0;
+    };
+    let bandH = measureBand();
+
+    const apply = () => {
       const y = window.scrollY;
       const goingDown = y > lastY.current;
       if (y < 80) setHidden(false);
@@ -44,17 +56,22 @@ export default function ImmersiveHeader({
       else if (!goingDown) setHidden(false);
       lastY.current = y;
 
-      if (overHero) setOverDark(y < window.innerHeight - 120);
-      else setOverDark(false);
+      const headerH = headerRef.current?.offsetHeight ?? 72;
+      setOverDark(bandH > 0 && y < bandH - headerH);
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const onResize = () => {
+      bandH = measureBand();
+      apply();
+    };
+
+    apply();
+    window.addEventListener("scroll", apply, { passive: true });
+    window.addEventListener("resize", onResize);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", apply);
+      window.removeEventListener("resize", onResize);
     };
-  }, [overHero]);
+  }, [pathname]);
 
   // Close everything on route change.
   useEffect(() => {
@@ -95,7 +112,12 @@ export default function ImmersiveHeader({
     >
       <div className="imm-header-inner">
         <Link href={homeHref} className="imm-brand" aria-label={`${brand} — home`}>
-          EWB<small>UVM</small>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt={brand} className="imm-brand-logo" />
+          ) : (
+            <>EWB<small>UVM</small></>
+          )}
         </Link>
 
         <button

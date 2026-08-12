@@ -1,22 +1,10 @@
-import ParallaxHero from "@/components/ParallaxHero";
-import PageRenderer from "@/components/PageRenderer";
-import { getPageData, getSettings } from "@/lib/store";
+import { redirect } from "next/navigation";
 
-export default async function HomePage() {
-  const [settings, data] = await Promise.all([
-    getSettings(),
-    getPageData("home"),
-  ]);
-
-  return (
-    <>
-      <ParallaxHero
-        eyebrow={settings.chapterName + " · UVM"}
-        heading={settings.heroHeading}
-        subline={settings.heroSubline}
-        image={settings.heroImages?.[0]}
-      />
-      <PageRenderer data={data} />
-    </>
-  );
+// The immersive (Cal-Poly-style) edition is the live public site. The root path
+// lands there; the other design editions stay reachable by URL / the switcher so
+// their components can be salvaged. To restore the original default-edition home,
+// delete this file's redirect and restore the ParallaxHero + PageRenderer version
+// from git history.
+export default function HomePage() {
+  redirect("/immersive");
 }

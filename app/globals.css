@@ -278,22 +278,30 @@ body {
 .ewb-btn-primary {
   background: var(--green);
   color: var(--chalk);
+  box-shadow: 0 1px 2px oklch(23% 0.03 158 / 0.18);
 }
 .ewb-btn-primary:hover {
   background: var(--green-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(23% 0.03 158 / 0.24);
 }
 .ewb-btn-primary:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: 0 1px 2px oklch(23% 0.03 158 / 0.18);
 }
 .ewb-btn-gold {
   background: var(--gold);
   color: oklch(28% 0.05 70);
+  box-shadow: 0 1px 2px oklch(40% 0.06 70 / 0.22);
 }
 .ewb-btn-gold:hover {
   background: var(--gold-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(40% 0.06 70 / 0.3);
 }
 .ewb-btn-gold:active {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: 0 1px 2px oklch(40% 0.06 70 / 0.22);
 }
 .ewb-btn-ghost {
   border: 1px solid currentColor;
@@ -945,7 +953,9 @@ body {
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  /* Bias toward the top of the photo so people's heads aren't cropped out of
+     the header band (a taller band + top focus keeps faces in frame). */
+  background-position: center 22%;
   background-repeat: no-repeat;
   z-index: 0;
 }
@@ -1017,6 +1027,19 @@ body {
   letter-spacing: var(--imm-track-wide);
   opacity: 0.8;
   color: var(--gold);
+}
+/* Chapter logo image, when SiteSettings.logoUrl is set. Sized to the header
+   band; the header's colour states (white-on-photo → green bar) sit behind it. */
+.imm-brand-logo {
+  display: block;
+  height: 1.9rem;
+  width: auto;
+  max-width: min(58vw, 15rem);
+  object-fit: contain;
+  /* The supplied EWB-USA lockup is blue; the immersive masthead is dark
+     (transparent over photos, deep-green on scroll). Knock it out to white so
+     it reads on both. Swap for a real white/mono asset later to drop the filter. */
+  filter: brightness(0) invert(1);
 }
 .imm-nav {
   display: flex;
@@ -1432,12 +1455,298 @@ body {
   color: var(--gold);
 }
 .imm-footer-base {
-  margin-top: var(--space-xl);
+  margin-top: var(--space-lg);
   padding-top: var(--space-md);
   border-top: 1px solid var(--rule-dark);
   font-size: 0.74rem;
   letter-spacing: 0.06em;
   color: var(--chalk-soft);
+}
+
+/* Cornell-style identity + clause + connect row */
+.imm-footer-org {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  text-align: left;
+}
+.imm-footer-org-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  color: var(--chalk);
+  flex: 1 1 16rem;
+}
+.imm-footer-clause {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--chalk-soft);
+  flex: 1 1 20rem;
+}
+.imm-footer-social {
+  display: flex;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+}
+.imm-footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule-dark);
+  color: var(--chalk-soft);
+  transition: color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out), transform 0.12s var(--ease-out);
+}
+.imm-footer-social-link:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+/* ─────────────────────────────  sponsors page (Cornell layout)  ─────────── */
+
+/* Cornell-style overlay hero: title + package CTA left, intro paragraph right,
+   both over the header photo. */
+.theme-immersive .spon-hero {
+  min-height: 70svh;
+}
+.spon-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: end;
+  width: 100%;
+}
+.spon-hero-cta {
+  margin-top: var(--space-lg);
+}
+.spon-hero-right {
+  padding-bottom: 0.35rem;
+}
+.spon-hero-lede {
+  color: var(--chalk);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.55;
+  max-width: 34rem;
+}
+@media (max-width: 760px) {
+  .spon-hero-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+.spon-ways {
+  margin-top: clamp(3rem, 8vw, 5.5rem);
+}
+.spon-ways-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+}
+@media (max-width: 760px) {
+  .spon-ways-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.spon-way-media {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  background-color: var(--poster-field, oklch(30% 0.06 158));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.spon-way-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
+  margin-top: 0.85rem;
+  color: var(--ink);
+}
+.theme-immersive .spon-way-title {
+  text-transform: uppercase;
+  letter-spacing: var(--imm-track);
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+.spon-way-body {
+  margin-top: 0.3rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.spon-logos {
+  margin-top: clamp(2.25rem, 5vw, 3.75rem);
+}
+.spon-logo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 3.5rem);
+  margin-top: var(--space-md);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+}
+.spon-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.spon-logo-img {
+  max-height: 3.5rem;
+  width: auto;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.85;
+  transition: filter var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out);
+}
+.spon-logo:hover .spon-logo-img {
+  filter: grayscale(0);
+  opacity: 1;
+}
+.spon-logo-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+}
+.spon-logos-empty,
+.spon-contact {
+  margin-top: var(--space-md);
+}
+
+/* ─────────────────────────────  contact page (get-involved + reach)  ────── */
+
+.theme-immersive .ctc-hero {
+  min-height: 62svh;
+}
+.ctc-hero-sub {
+  margin-top: var(--space-sm);
+  color: var(--chalk);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.55;
+  max-width: 40rem;
+}
+
+.ctc-involve-text h2,
+.ctc-reach h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.theme-immersive .ctc-involve-text h2,
+.theme-immersive .ctc-reach h2 {
+  text-transform: uppercase;
+  letter-spacing: var(--imm-track);
+  font-weight: 500;
+}
+
+.ctc-involve {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+.ctc-involve-text p {
+  margin-top: 0.75rem;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  max-width: 40rem;
+}
+.ctc-meeting-card {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+.ctc-meeting-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.ctc-meeting-body {
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .ctc-involve {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ctc-reach {
+  margin-top: clamp(3rem, 8vw, 5.5rem);
+}
+.ctc-reach-lede {
+  margin-bottom: var(--space-lg);
+}
+
+.ctc-people {
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+}
+.ctc-people-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 3.5rem);
+  margin-top: var(--space-md);
+}
+.ctc-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: min(20rem, 100%);
+}
+.ctc-person-photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--poster-field, oklch(30% 0.06 158));
+}
+.ctc-person-photo--initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+.ctc-person-name {
+  margin-top: var(--space-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+.ctc-person-role {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.ctc-person-email {
+  margin-top: 0.35rem;
+  color: var(--green-deep);
+  font-weight: 600;
+  word-break: break-word;
 }
 
 /* ─────────────────────────────  immersive mobile  ───────────────────────── */

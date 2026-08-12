@@ -19,7 +19,18 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
       <Field label="Chapter name" value={s.chapterName} onChange={(v) => set({ chapterName: v })} />
       <Field label="Tagline (footer + meta)" value={s.tagline} onChange={(v) => set({ tagline: v })} textarea />
       <Field label="Contact email" value={s.contactEmail} onChange={(v) => set({ contactEmail: v })} />
+      <ImageField
+        label="Chapter logo (blank = text wordmark in the header)"
+        value={s.logoUrl ?? ""}
+        onChange={(v) => set({ logoUrl: v })}
+      />
+
+      <hr className="my-6 border-neutral-300" />
+      <p className="text-xs uppercase tracking-wide text-neutral-500 mb-3">Social &amp; links (footer + sponsors)</p>
       <Field label="Instagram URL (optional)" value={s.instagram ?? ""} onChange={(v) => set({ instagram: v })} placeholder="https://instagram.com/…" />
+      <Field label="Facebook URL (optional)" value={s.facebook ?? ""} onChange={(v) => set({ facebook: v })} placeholder="https://facebook.com/…" />
+      <Field label="LinkedIn URL (optional)" value={s.linkedin ?? ""} onChange={(v) => set({ linkedin: v })} placeholder="https://linkedin.com/company/…" />
+      <Field label="Sponsorship package link (PDF / Drive URL)" value={s.sponsorshipPackageUrl ?? ""} onChange={(v) => set({ sponsorshipPackageUrl: v })} placeholder="https://…" />
 
       <hr className="my-6 border-neutral-300" />
       <p className="text-xs uppercase tracking-wide text-neutral-500 mb-3">Home hero</p>

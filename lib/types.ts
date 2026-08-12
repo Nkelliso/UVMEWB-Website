@@ -57,6 +57,14 @@ export interface SiteSettings {
   tagline: string;
   contactEmail: string;
   instagram?: string;
+  facebook?: string;
+  linkedin?: string;
+  /** Link to the chapter's sponsorship-package PDF (Drive/Dropbox/etc. or an
+   *  uploaded file). Shown as the "View our sponsorship package" CTA. */
+  sponsorshipPackageUrl?: string;
+  /** Chapter logo image (path under /public or full URL). When set, the header
+   *  renders it in place of the "EWB·UVM" text wordmark. Editable via /admin. */
+  logoUrl?: string;
   heroHeading: string;
   heroSubline: string;
   heroImages: string[];

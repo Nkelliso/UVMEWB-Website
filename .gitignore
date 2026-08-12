@@ -45,3 +45,6 @@ next-env.d.ts
 
 # raw uploaded photo archive (staging only; not served)
 /public/photos/_originals/
+
+# local-only photo comparison samples
+public/photos/_vibrancy-sample/

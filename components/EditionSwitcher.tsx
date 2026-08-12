@@ -17,10 +17,10 @@ import { useEffect, useRef, useState } from "react";
 type Edition = { id: string; label: string; base: string };
 
 const EDITIONS: Edition[] = [
-  { id: "uvm", label: "UVM · canonical", base: "" },
-  { id: "immersive", label: "Cal Poly", base: "/immersive" },
-  { id: "stevens", label: "Stevens", base: "/stevens" },
-  { id: "cornell", label: "Cornell", base: "/cornell" },
+  { id: "immersive", label: "Cal Poly · Current", base: "/immersive" },
+  { id: "uvm", label: "UVM · Past idea", base: "" },
+  { id: "stevens", label: "Stevens · Reference", base: "/stevens" },
+  { id: "cornell", label: "Cornell · Reference", base: "/cornell" },
 ];
 
 /** Split a pathname into the edition it belongs to and the shared sub-path. */
@@ -31,7 +31,8 @@ function locate(pathname: string): { current: Edition; sub: string } {
     .find(
       (e) => pathname === e.base || pathname.startsWith(e.base + "/")
     );
-  const current = match ?? EDITIONS[0];
+  // Fallback = the base-"" (UVM canonical) edition, wherever it sits in the list.
+  const current = match ?? EDITIONS.find((e) => e.base === "") ?? EDITIONS[0];
   const sub = current.base ? pathname.slice(current.base.length) : pathname;
   return { current, sub };
 }

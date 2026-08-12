@@ -18,6 +18,11 @@ export default function ContactForm() {
 
   return (
     <form action={formAction} className="ewb-form">
+      {/* Honeypot — hidden from users; bots that fill it are silently dropped. */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
+        <label htmlFor="company">Company</label>
+        <input id="company" name="company" tabIndex={-1} autoComplete="off" />
+      </div>
       <div className="ewb-field">
         <label htmlFor="name">Your name</label>
         <input className="ewb-input" id="name" name="name" required />

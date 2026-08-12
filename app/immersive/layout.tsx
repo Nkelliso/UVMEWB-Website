@@ -18,9 +18,9 @@ const immersiveDisplay = Montserrat({
 const BASE = "/immersive";
 
 export const metadata: Metadata = {
-  title: "EWB UVM — Immersive",
+  title: "Engineers Without Borders — UVM Chapter",
   description:
-    "An immersive, photography-first presentation of the University of Vermont chapter of Engineers Without Borders.",
+    "The University of Vermont student chapter of Engineers Without Borders — designing sustainable infrastructure alongside the communities we serve.",
 };
 
 /** Re-point every nav href into the /immersive tree so the parallel site links
@@ -48,7 +48,12 @@ export default async function ImmersiveLayout({
 
   return (
     <div className={`theme-immersive ${immersiveDisplay.variable}`}>
-      <ImmersiveHeader nav={nav} brand={settings.chapterName} homeHref={BASE} />
+      <ImmersiveHeader
+        nav={nav}
+        brand={settings.chapterName}
+        homeHref={BASE}
+        logoUrl={settings.logoUrl}
+      />
       <main>{children}</main>
       <ImmersiveFooter settings={settings} base={BASE} />
       <EditionSwitcher />
