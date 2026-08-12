@@ -17,8 +17,8 @@ import { useEffect, useRef, useState } from "react";
 type Edition = { id: string; label: string; base: string };
 
 const EDITIONS: Edition[] = [
-  { id: "immersive", label: "Cal Poly · Current", base: "/immersive" },
-  { id: "uvm", label: "UVM · Past idea", base: "" },
+  { id: "immersive", label: "Cal Poly · Current", base: "" },
+  { id: "uvm", label: "UVM · Past idea", base: "/uvm" },
   { id: "stevens", label: "Stevens · Reference", base: "/stevens" },
   { id: "cornell", label: "Cornell · Reference", base: "/cornell" },
 ];

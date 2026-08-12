@@ -3,11 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageShell from "@/components/PageShell";
 import Placeholder from "@/components/Placeholder";
-import { getProject } from "@/lib/store";
+import { getProject, getProjects } from "@/lib/store";
 
-// No generateStaticParams: project content is CMS-backed and edited at runtime
-// via /admin, so these detail pages render on demand (always fresh) rather than
-// being prerendered at build time.
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  return projects.map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -17,9 +18,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = await getProject(slug);
   return {
-    title: project
-      ? `${project.title} — EWB UVM (Immersive)`
-      : "Project — EWB UVM (Immersive)",
+    title: project ? `${project.title} — EWB UVM` : "Project — EWB UVM",
     description: project?.summary,
   };
 }
@@ -34,12 +33,7 @@ export default async function ProjectDetail({
   if (!project || !project.published) notFound();
 
   return (
-    <PageShell
-      eyebrow={project.eyebrow}
-      title={project.title}
-      narrow={false}
-      image={project.heroImage || `/photos/projects/${project.slug}.jpg`}
-    >
+    <PageShell eyebrow={project.eyebrow} title={project.title} narrow={false} image={project.heroImage}>
       <div className="ewb-wrap-narrow" style={{ paddingInline: 0 }}>
         <p className="ewb-lede">{project.summary}</p>
         <div style={{ display: "flex", gap: "0.6rem", marginTop: "1rem" }}>
@@ -90,7 +84,7 @@ export default async function ProjectDetail({
       </div>
 
       <div style={{ marginTop: "var(--space-lg)" }}>
-        <Link href="/immersive/sponsors" className="ewb-btn ewb-btn-primary">
+        <Link href="/uvm/sponsors" className="ewb-btn ewb-btn-primary">
           Support this project <span aria-hidden>→</span>
         </Link>
       </div>

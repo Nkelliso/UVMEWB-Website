@@ -1032,9 +1032,9 @@ body {
    band; the header's colour states (white-on-photo → green bar) sit behind it. */
 .imm-brand-logo {
   display: block;
-  height: 1.9rem;
+  height: 3.8rem;
   width: auto;
-  max-width: min(58vw, 15rem);
+  max-width: min(72vw, 22rem);
   object-fit: contain;
   /* The supplied EWB-USA lockup is blue; the immersive masthead is dark
      (transparent over photos, deep-green on scroll). Knock it out to white so
@@ -1139,27 +1139,179 @@ body {
 .imm-dropdown[data-open="false"] {
   display: none;
 }
+/* Cornell-style dropdown: a solid black panel with right-aligned white links
+   (matches the studied EWB-Cornell nav). First pass — refine against the video
+   reference. */
 .imm-dropdown-inner {
-  min-width: 15rem;
-  border: 1px solid var(--rule-dark);
-  background: oklch(18% 0.03 158 / 0.97);
-  backdrop-filter: blur(12px);
-  padding: 0.35rem;
-  box-shadow: 0 24px 46px -20px oklch(12% 0.03 158 / 0.75);
+  min-width: 12.5rem;
+  border: none;
+  background: oklch(15% 0.02 158);
+  padding: 0.55rem 0.9rem;
+  box-shadow: 0 24px 46px -20px oklch(12% 0.03 158 / 0.6);
 }
 .imm-dropdown-link {
   display: block;
-  padding: 0.6rem 0.8rem;
+  text-align: right;
+  padding: 0.3rem 0;
+  font-family: var(--font-display);
   font-size: 0.82rem;
-  letter-spacing: 0.06em;
-  color: var(--chalk-soft);
-  transition: background var(--dur) var(--ease-out),
-    color var(--dur) var(--ease-out);
+  letter-spacing: 0.02em;
+  color: #fff;
+  transition: color var(--dur) var(--ease-out);
 }
 .imm-dropdown-link:hover,
 .imm-dropdown-link[data-active="true"] {
-  background: oklch(97% 0.01 95 / 0.08);
+  background: transparent;
   color: var(--gold);
+}
+
+/* ───────────────  Cornell-style project detail pages  ─────────────── */
+.proj-hero {
+  position: relative;
+  min-height: 62vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--poster-field);
+  color: var(--chalk);
+}
+.proj-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+}
+.proj-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to top,
+    oklch(20% 0.04 158 / 0.88),
+    oklch(20% 0.04 158 / 0.2) 55%,
+    transparent
+  );
+}
+.proj-hero-inner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+}
+.proj-hero-eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--imm-track-wide);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin: 0 0 0.7rem;
+}
+.proj-hero-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.proj-hero-meta {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--imm-track);
+  font-size: 0.82rem;
+  color: var(--chalk-soft);
+  margin: 1.1rem 0 0;
+}
+
+.proj-body {
+  background: var(--paper);
+  color: var(--ink);
+}
+.proj-section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: center;
+}
+.proj-section-text,
+.proj-section-media {
+  min-width: 0;
+}
+.proj-section.is-flip .proj-section-text {
+  order: 2;
+}
+.proj-section.is-text {
+  grid-template-columns: minmax(0, 46rem);
+  justify-content: start;
+}
+.proj-section-heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.6vw, 3.3rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--green-deep);
+  margin: 0 0 1.1rem;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.proj-section-body {
+  font-size: 1.06rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.proj-section-media img {
+  width: 100%;
+  max-height: 34rem;
+  object-fit: cover;
+  border-radius: 2px;
+  display: block;
+}
+
+.proj-tech {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+}
+.proj-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.proj-tech-grid img {
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper);
+  display: block;
+}
+.proj-cta {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 5vw, 3rem) clamp(4rem, 9vw, 7rem);
+}
+
+@media (max-width: 760px) {
+  .proj-section {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .proj-section.is-flip .proj-section-text {
+    order: 0;
+  }
+  .proj-section-media {
+    order: 2;
+  }
 }
 
 /* ─────────────────────────────  poster stack  ───────────────────────────── */
@@ -1178,6 +1330,12 @@ body {
 }
 .imm-poster.is-short {
   min-height: 78svh;
+}
+/* Warm-tone treatment for home-page photos (sepia + saturation + hue shift, no
+   brightness lift). Applied to the background layer only, so overlaid text stays
+   unaffected. Toggled per-poster via the `warm` prop. */
+.imm-poster.is-warm .imm-poster-bg {
+  filter: saturate(1.18) sepia(0.17) hue-rotate(-7deg);
 }
 .imm-poster-bg {
   position: absolute;

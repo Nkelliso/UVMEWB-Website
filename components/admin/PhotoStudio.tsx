@@ -36,13 +36,6 @@ const SECTION_SLOTS: Slot[] = [
   { id: "contact", label: "Contact header", kind: "section", key: "contact", aspect: 16 / 9 },
 ];
 
-const ASPECTS: { label: string; value: number }[] = [
-  { label: "16:9", value: 16 / 9 },
-  { label: "3:2", value: 3 / 2 },
-  { label: "4:3", value: 4 / 3 },
-  { label: "1:1", value: 1 },
-];
-
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -189,7 +182,7 @@ export default function PhotoStudio({
           <Link href="/admin" className="text-neutral-400 text-sm hover:text-white">← Admin</Link>
           <span className="text-white font-bold text-sm">Photos</span>
         </div>
-        <Link href="/immersive" className="text-neutral-400 text-sm hover:text-white">View site</Link>
+        <Link href="/" className="text-neutral-400 text-sm hover:text-white">View site</Link>
       </div>
 
       <div className="max-w-5xl mx-auto px-8 py-10">
@@ -279,21 +272,12 @@ export default function PhotoStudio({
                 />
               </div>
 
-              {/* aspect + zoom */}
+              {/* zoom — drag the photo to reposition, zoom to crop. The crop frame
+                  is fixed to this slot's natural proportions (no shape picker). */}
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-neutral-500">Shape:</span>
-                {ASPECTS.map((a) => (
-                  <button
-                    key={a.label}
-                    onClick={() => setAspect(a.value)}
-                    className={`text-xs px-2 py-1 rounded border ${aspect === a.value ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300"}`}
-                  >
-                    {a.label}
-                  </button>
-                ))}
-                <label className="flex items-center gap-2 text-xs text-neutral-500 ml-auto">
+                <label className="flex items-center gap-2 text-xs text-neutral-500 w-full">
                   Zoom
-                  <input type="range" min={1} max={3} step={0.01} value={zoom} onChange={(e) => setZoom(+e.target.value)} />
+                  <input type="range" min={1} max={3} step={0.01} value={zoom} onChange={(e) => setZoom(+e.target.value)} className="flex-1" />
                 </label>
               </div>
 

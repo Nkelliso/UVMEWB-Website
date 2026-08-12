@@ -33,7 +33,7 @@ export default function ImmersiveFooter({
             top masthead, so the footer stays a single quiet identity band). */}
         <div className="imm-footer-org">
           <p className="imm-footer-org-name">
-            Engineers Without Borders — University of Vermont
+            Engineers Without Borders at the University of Vermont
           </p>
           <p className="imm-footer-clause">
             A registered student organization of the University of Vermont.

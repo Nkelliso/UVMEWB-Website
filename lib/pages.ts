@@ -56,7 +56,7 @@ export function buildNav(projects: Project[], prefix = ""): NavItem[] {
       .filter((proj) => proj.published)
       .sort((a, b) => a.order - b.order)
       .map((proj) => ({
-        label: shortLabel(proj.title),
+        label: proj.navLabel ?? shortLabel(proj.title),
         href: p(`/projects/${proj.slug}`),
       })),
   ];

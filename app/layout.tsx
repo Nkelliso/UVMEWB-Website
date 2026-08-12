@@ -1,17 +1,30 @@
 import type { Metadata } from "next";
-import { Manrope, Nunito_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const manrope = Manrope({
+// Self-hosted (was next/font/google). Fetching Google Fonts at compile time is
+// fragile: it hard-fails `next build` when a pinned woff2 404s, and in dev the
+// font-loader's jest-worker can die on a flaky fetch ("Jest worker … exceeding
+// retry limit"), which broke the /admin layout editor. Files live in app/fonts/.
+const manrope = localFont({
   variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  display: "swap",
+  src: [
+    { path: "./fonts/manrope-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/manrope-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/manrope-700.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/manrope-800.woff2", weight: "800", style: "normal" },
+  ],
 });
 
-const nunitoSans = Nunito_Sans({
+const nunitoSans = localFont({
   variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  display: "swap",
+  src: [
+    { path: "./fonts/nunito-sans-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/nunito-sans-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/nunito-sans-700.woff2", weight: "700", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {

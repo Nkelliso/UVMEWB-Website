@@ -5,7 +5,7 @@ import Placeholder from "@/components/Placeholder";
 import { getProjects } from "@/lib/store";
 
 export const metadata: Metadata = {
-  title: "Projects — EWB UVM",
+  title: "Projects · EWB UVM",
   description:
     "International, domestic, and local engineering projects run by the EWB UVM chapter.",
 };
@@ -16,15 +16,10 @@ export default async function ProjectsIndex() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <PageShell
-      eyebrow="Our work"
-      title="Projects, near and far"
-      narrow={false}
-      image="/photos/projects.jpg"
-    >
+    <PageShell eyebrow="Our work" title="Projects, near and far" narrow={false} image="/photos/site/projects-header.jpg">
       <p className="ewb-lede">
         From a clean-water pipeline in Rwanda to stormwater work in the
-        Northeast and volunteering across Vermont — every project is designed
+        Northeast and volunteering across Vermont, every project is designed
         for community ownership and built to last.
       </p>
 
@@ -43,7 +38,7 @@ export default async function ProjectsIndex() {
                 style={{ width: "100%", height: "11rem", objectFit: "cover" }}
               />
             ) : (
-              <Placeholder label="Project photo — placeholder" height="11rem" />
+              <Placeholder label="Project photo placeholder" height="11rem" />
             )}
             <div className="ewb-project-card-body">
               <span className="ewb-tag">{p.status}</span>

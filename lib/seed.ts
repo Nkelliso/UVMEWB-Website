@@ -19,7 +19,7 @@ import type {
 export const SEED_SETTINGS: SiteSettings = {
   chapterName: "Engineers Without Borders",
   tagline:
-    "The University of Vermont student chapter — designing sustainable infrastructure alongside the communities we serve.",
+    "The University of Vermont student chapter, designing sustainable infrastructure alongside the communities we serve.",
   contactEmail: "universityofvermontburlington@chapters-ewb-usa.org",
   instagram: "https://www.instagram.com/uvmewb_usa/",
   facebook: "",
@@ -30,13 +30,13 @@ export const SEED_SETTINGS: SiteSettings = {
   heroHeading: "Engineering that listens first.",
   heroSubline:
     "Student engineers, designers, and organizers at the University of Vermont, building lasting infrastructure with communities around the world.",
-  heroImages: ["/photos/hero.jpg"],
+  heroImages: ["/photos/site/home-hero-team.jpg"],
   sectionImages: {
-    projects: "/photos/projects.jpg",
+    projects: "/photos/hero.jpg",
     giving: "/photos/giving.jpg",
     join: "/photos/join.jpg",
     about: "/photos/about.jpg",
-    sponsors: "/photos/sponsors.jpg",
+    sponsors: "/photos/site/kajinge-scenic.jpg",
     contact: "/photos/contact.jpg",
   },
 };
@@ -79,54 +79,72 @@ export const SEED_OFFICERS: OfficerBoard = {
 export const SEED_PROJECTS: Project[] = [
   {
     slug: "rwanda-water",
-    title: "Kajinge, Rwanda — Clean Water Pipeline",
-    eyebrow: "Projects · Rwanda",
-    location: "Kajinge, Western Rwanda",
+    title: "Kajinge, Rwanda",
+    eyebrow: "International Project",
+    location: "Kajinge, Western Province, Rwanda",
     status: "In design",
+    navLabel: "International Project",
     summary:
-      "A gravity-fed replacement pipeline and chlorination system bringing safe drinking water to ~1,100 students and ~6,300 residents.",
-    heroImage: "/photos/projects/rwanda-water.jpg",
+      "A clean-water pipeline and chlorination system for the school and community of Kajinge, Rwanda.",
+    heroImage: "/photos/site/kajinge-scenic.jpg",
     sections: [
       {
-        heading: "The problem",
-        body: "Kajinge is a rural village in Western Rwanda where the community relies on a spring and an aging PVC pipeline that frequently breaks during the rainy season. When it fails, travel time to clean water increases from 10–20 minutes to over an hour. Waterborne illness is widespread — in 2021 alone, 220 students dropped out of school and 630 arrived late due to health center visits for illness related to unsafe water.",
+        heading: "Background",
+        image: "/photos/site/rwanda-full-team.jpg",
+        body: "UVM Engineers Without Borders was connected through IDA Rwanda, a Rwandan NGO, to Kajinge, a community in the Western Province of Rwanda. Kajinge is a rural community with a large school of 1,100 students, many of whom walk over an hour from the surrounding villages. In May 2025 we sent our first travel team on an assessment trip, where they collected project data, ran water-quality testing, and built a lasting relationship with the community.",
+      },
+      {
+        heading: "Engineering",
+        image: "/photos/site/rwanda-fieldwork.jpg",
+        body: "Aging infrastructure has left the school and surrounding community depending on a spring-fed source that is frequently contaminated and often fails during the rainy season, leaving students and staff to spend long stretches collecting water while waterborne illness spreads. Around 79% of students are affected by illness, and 95% of those affected end up at the health center or arrive late to school. In 2021, 220 students dropped out and 630 arrived late because of health-center visits for waterborne illness.",
       },
       {
         heading: "Our solution",
-        body: "UVM EWB is designing a ~700-meter gravity-fed replacement pipeline and a chlorination system at the water source. The project prioritizes community ownership: local labor will be employed, a community water committee will be trained to oversee maintenance, and a maintenance fund will be established for ongoing repairs and chlorination supplies.",
+        image: "/photos/site/rwanda-pipes.jpg",
+        body: "We're designing a 700-meter replacement pipeline with a chlorination system at the source, buried one meter deep. The design reuses existing infrastructure where possible. We're targeting implementation in December 2027.",
+      },
+      {
+        heading: "Community ownership",
+        image: "/photos/site/rwanda-sienna-kids.jpg",
+        body: "The project is built to outlast our travel team. We're establishing an elected local water committee with access to a maintenance fund to oversee upkeep and chlorination supplies, employing local labor, and sourcing as much material as possible from the nearby market in Kabaya. Educational seminars will deepen the community's understanding of the system so it can be maintained locally for years.",
       },
     ],
-    statusItems: [
-      "Assessment trip completed — topographical surveys, water quality testing, community meetings",
-      "Currently in engineering and design phase",
-      "Target: return implementation trip in 2026",
-    ],
-    stats: [
-      { value: "~6,300", label: "Residents served" },
-      { value: "~1,100", label: "Students at the local school" },
-      { value: "~$30k", label: "Estimated project cost" },
-      { value: "~700m", label: "New pipeline" },
-      { value: "~79%", label: "Community affected by illness" },
-    ],
+    technicalDrawings: ["/photos/site/rwanda-map.jpg"],
+    statusItems: [],
+    stats: [],
     published: true,
     order: 0,
   },
   {
     slug: "catskills-stormwater",
-    title: "Catskills Stormwater Runoff",
-    eyebrow: "Projects · Domestic",
-    location: "Catskills, New York",
+    title: "Catskills, New York",
+    eyebrow: "Domestic Project",
+    location: "Catskill, New York",
     status: "Active",
+    navLabel: "Domestic Project",
     summary:
-      "A domestic project tackling stormwater runoff and erosion in partnership with a Catskills community.",
-    heroImage: "/photos/projects/catskills-stormwater.jpg",
+      "Stormwater-mitigation design for the Montessori School of Catskill, New York.",
+    heroImage: "/photos/projects.jpg",
     sections: [
       {
-        heading: "Overview",
-        body: "Our domestic team is scoping a stormwater management project in the Catskills region of New York. Details and design documentation will be added here as the project develops.",
+        heading: "Background",
+        body: "We're working on the Montessori School of Catskill, New York, designing stormwater-mitigation systems for the school.",
+      },
+      {
+        heading: "Engineering",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Placeholder text, to be filled in by the domestic team.",
+      },
+      {
+        heading: "Our solution",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Placeholder text, to be filled in by the domestic team.",
+      },
+      {
+        heading: "Community ownership",
+        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Placeholder text, to be filled in by the domestic team.",
       },
     ],
-    statusItems: ["Scoping and community partnership in progress"],
+    technicalDrawings: ["/photos/site/catskills-cad.jpg"],
+    statusItems: [],
     stats: [],
     published: true,
     order: 1,
@@ -134,16 +152,25 @@ export const SEED_PROJECTS: Project[] = [
   {
     slug: "local-volunteering",
     title: "Local Volunteering",
-    eyebrow: "Projects · Local",
-    location: "Chittenden County, Vermont",
+    eyebrow: "Local Volunteering",
+    location: "Vermont",
     status: "Ongoing",
+    navLabel: "Local Volunteering",
     summary:
-      "Hands-on service around Burlington and the Green Mountains — keeping engineering skills grounded in our own community.",
-    heroImage: "/photos/projects/local-volunteering.jpg",
+      "Hands-on service with community organizations across Vermont.",
+    heroImage: "/photos/join.jpg",
     sections: [
       {
         heading: "Overview",
-        body: "Between travel projects, our local team volunteers with community partners across Vermont. Add events, partners, and photos here as the chapter runs them.",
+        body: "Our local project team partners with community organizations across Vermont. We work to support neighbors in need and people who have been disproportionately affected by flooding and other natural disasters in Vermont.",
+      },
+      {
+        heading: "Fall 2025 projects",
+        body: "On September 27th, members split across two sites with Rebuilding Together Greater Burlington. In South Burlington, volunteers built a new fence and repainted the facade of a family home that had fallen into disrepair. In Hinesburg, the group cleared and cleaned a property's yard so skilled volunteers could replace the deck and repair the kitchen. Working alongside experienced organizers, the team got to see the direct impact of their work in the community.",
+      },
+      {
+        heading: "Spring 2026",
+        body: "Started a project in Middlebury, Vermont. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Placeholder, more detail coming.",
       },
     ],
     statusItems: [],
@@ -154,9 +181,10 @@ export const SEED_PROJECTS: Project[] = [
   {
     slug: "past-projects",
     title: "Past Projects",
-    eyebrow: "Projects · Archive",
+    eyebrow: "Archive",
     location: "Various",
     status: "Archive",
+    navLabel: "Past Projects",
     summary:
       "A record of the chapter's completed work and the communities we've partnered with over the years.",
     heroImage: "/photos/projects/past-projects.jpg",
@@ -203,7 +231,7 @@ export const SEED_PAGE_HOME: PuckData = {
         id: "home-giving",
         eyebrow: "Giving",
         heading: "Hands-on engineering. Lasting impact.",
-        body: "Every dollar given to our chapter helps train the next generation of engineers while changing lives in communities around the world. When you support EWB-UVM, you're investing in clean water, reliable infrastructure, and a generation of engineers who lead with listening.",
+        body: "Every dollar given to our chapter helps train the next generation of engineers while changing lives in communities around the world. When you support EWB-UVM, you're investing in clean water, reliable infrastructure, and a generation of engineers grounded in the communities they serve.",
         primaryLabel: "Support our work",
         primaryHref: "/sponsors",
         secondaryLabel: "",
@@ -215,7 +243,7 @@ export const SEED_PAGE_HOME: PuckData = {
       props: {
         id: "home-cta",
         heading: "Build something that lasts.",
-        body: "Whether you want to join the chapter, partner with us, or support a project — we'd love to hear from you.",
+        body: "Whether you want to join the chapter, partner with us, or support a project, we'd love to hear from you.",
         buttonLabel: "Get in touch",
         buttonHref: "/contact",
       },
@@ -230,16 +258,26 @@ export const SEED_PAGE_ABOUT: PuckData = {
       type: "RichText",
       props: {
         id: "about-1",
-        heading: "About our chapter",
-        body: "Engineers Without Borders at the University of Vermont is a student-led chapter of EWB-USA. We partner with communities — locally and internationally — to design and build sustainable infrastructure, and to train engineers who lead with listening.",
+        heading: "About us",
+        body: "The University of Vermont Engineers Without Borders chapter aims to design and implement lasting solutions to problems in international and domestic communities, through collaboration with community partners around the world. Our members bring a variety of cultures and experiences, and get the chance to apply their knowledge while gaining real-world experience and global awareness.",
       },
     },
     {
       type: "RichText",
       props: {
         id: "about-2",
-        heading: "What we do",
-        body: "Our members run international projects (currently a clean-water pipeline in Kajinge, Rwanda), domestic projects, and local volunteering across Vermont. Every project is designed for community ownership and long-term maintenance, not just a one-time build.",
+        heading: "Who we are",
+        body: "UVM Engineers Without Borders is a student-led nonprofit focused on community-driven development through programs worldwide. We take on sustainable engineering projects while giving students room to grow through leadership roles, field work, and new technical skills.",
+      },
+    },
+    {
+      type: "CTABand",
+      props: {
+        id: "about-teams",
+        heading: "Explore our teams",
+        body: "See what our international, domestic, and local project teams are working on.",
+        buttonLabel: "See our projects",
+        buttonHref: "/projects",
       },
     },
   ],
@@ -253,7 +291,7 @@ export const SEED_PAGE_MISSION: PuckData = {
       props: {
         id: "mission-1",
         heading: "Mission statement",
-        body: "Engineers Without Borders — UVM builds a better world through engineering projects that empower communities to meet their basic human needs, while developing engineers who lead with humility, listen first, and design for lasting local ownership.",
+        body: "Engineers Without Borders at UVM builds a better world through engineering projects that empower communities to meet their basic human needs, while developing engineers who lead with humility, listen first, and design for lasting local ownership.",
       },
     },
   ],

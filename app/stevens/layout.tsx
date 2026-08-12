@@ -1,4 +1,4 @@
-import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import EditionSwitcher from "@/components/EditionSwitcher";
@@ -9,11 +9,15 @@ import "../stevens-theme.css";
 /** Light geometric display face for the Stevens-studied re-skin. Scoped to this
  *  subtree via `poppins.variable` on the theme wrapper — the canonical site
  *  never loads it. */
-const poppins = Poppins({
+const poppins = localFont({
   variable: "--font-stevens",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
   display: "swap",
+  src: [
+    { path: "../fonts/poppins-300.woff2", weight: "300", style: "normal" },
+    { path: "../fonts/poppins-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/poppins-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/poppins-600.woff2", weight: "600", style: "normal" },
+  ],
 });
 
 const BASE = "/stevens";

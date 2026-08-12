@@ -111,7 +111,7 @@ export default function ImmersiveHeader({
       onMouseLeave={() => setOpenIdx(null)}
     >
       <div className="imm-header-inner">
-        <Link href={homeHref} className="imm-brand" aria-label={`${brand} — home`}>
+        <Link href={homeHref} className="imm-brand" aria-label={`${brand} home`}>
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logoUrl} alt={brand} className="imm-brand-logo" />

@@ -74,6 +74,7 @@ export default function OfficersForm({ initial }: { initial: OfficerBoard }) {
                 <Field label="Title" value={o.title} onChange={(v) => updGroupOfficer(gi, oi, { title: v })} />
                 <Field label="Name" value={o.name} onChange={(v) => updGroupOfficer(gi, oi, { name: v })} />
               </Row>
+              <ImageField label="Photo (optional)" value={o.photoUrl ?? ""} onChange={(v) => updGroupOfficer(gi, oi, { photoUrl: v })} />
             </Card>
           ))}
           <AddButton label="Add director" onClick={() => updGroup(gi, { officers: [...g.officers, { title: "", name: "" }] })} />

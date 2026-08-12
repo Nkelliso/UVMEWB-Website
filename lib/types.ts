@@ -28,6 +28,8 @@ export interface ProjectStat {
 export interface ProjectSection {
   heading: string;
   body: string;
+  /** Optional photo shown beside this section in the alternating layout. */
+  image?: string;
 }
 
 export interface Project {
@@ -43,6 +45,10 @@ export interface Project {
   stats: ProjectStat[];
   published: boolean;
   order: number;
+  /** Friendly label for the Projects nav dropdown (falls back to the title). */
+  navLabel?: string;
+  /** Technical drawings / maps shown in their own section. */
+  technicalDrawings?: string[];
 }
 
 export interface Sponsor {

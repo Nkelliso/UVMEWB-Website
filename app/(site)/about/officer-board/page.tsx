@@ -5,7 +5,7 @@ import { getOfficers } from "@/lib/store";
 import type { Officer } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Officer Board — EWB UVM",
+  title: "Officer Board · EWB UVM",
   description: "Meet the EWB UVM officer board.",
 };
 
@@ -27,7 +27,7 @@ function OfficerCard({ officer }: { officer: Officer }) {
         />
       ) : (
         <div style={{ marginBottom: "0.9rem" }}>
-          <Placeholder label="Photo — placeholder" height="8rem" />
+          <Placeholder label="Photo placeholder" height="8rem" />
         </div>
       )}
       <p className="ewb-officer-title">{officer.title}</p>
@@ -40,8 +40,8 @@ export default async function OfficerBoardPage() {
   const board = await getOfficers();
 
   return (
-    <PageShell eyebrow="About" title="Meet our team" narrow={false} image="/photos/about.jpg">
-      <p className="ewb-note">Current officers — {board.asOf}.</p>
+    <PageShell eyebrow="About" title="Meet our team" narrow={false}>
+      <p className="ewb-note">Current officers as of {board.asOf}.</p>
 
       <section className="ewb-officer-section">
         <h2>Faculty Advisor</h2>

@@ -28,6 +28,7 @@ export default function PosterSection({
   strip,
   showScroll = false,
   short = false,
+  warm = false,
   parallaxStrength = 60,
 }: {
   variant?: "hero" | "poster";
@@ -40,6 +41,9 @@ export default function PosterSection({
   strip?: string[];
   showScroll?: boolean;
   short?: boolean;
+  /** Warm the background photo (sepia + saturation + hue shift). Used on the
+   *  home page's photographic bands. */
+  warm?: boolean;
   /** Max background travel in px. Default 60 = the subtle home parallax. A large
    *  value (~180) turns it into the pronounced Cal-Poly-style reveal and requires
    *  the `.is-parallax` bleed override (applied automatically past 120). */
@@ -93,7 +97,7 @@ export default function PosterSection({
       ref={sectionRef}
       className={`imm-poster ${variant === "hero" ? "is-hero" : `align-${align}`} ${
         short ? "is-short" : ""
-      } ${strong ? "is-parallax" : ""}`}
+      } ${strong ? "is-parallax" : ""} ${warm ? "is-warm" : ""}`}
     >
       <div
         ref={bgRef}

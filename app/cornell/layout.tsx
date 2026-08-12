@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import CornellHeader from "@/components/cornell/CornellHeader";
 import CornellFooter from "@/components/cornell/CornellFooter";
 import EditionSwitcher from "@/components/EditionSwitcher";
@@ -7,10 +7,15 @@ import { getProjects, getSettings } from "@/lib/store";
 import { buildNav } from "@/lib/pages";
 import "../cornell-theme.css";
 
-const poppins = Poppins({
+const poppins = localFont({
   variable: "--font-cornell",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  src: [
+    { path: "../fonts/poppins-400.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/poppins-500.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/poppins-600.woff2", weight: "600", style: "normal" },
+    { path: "../fonts/poppins-700.woff2", weight: "700", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {

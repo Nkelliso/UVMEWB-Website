@@ -5,7 +5,7 @@ import { getOfficers } from "@/lib/store";
 import type { Officer } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Officer Board — EWB UVM (Immersive)",
+  title: "Officer Board — EWB UVM",
   description: "Meet the EWB UVM officer board.",
 };
 
@@ -40,7 +40,7 @@ export default async function OfficerBoardPage() {
   const board = await getOfficers();
 
   return (
-    <PageShell eyebrow="About" title="Meet our team" narrow={false}>
+    <PageShell eyebrow="About" title="Meet our team" narrow={false} image="/photos/about.jpg">
       <p className="ewb-note">Current officers — {board.asOf}.</p>
 
       <section className="ewb-officer-section">

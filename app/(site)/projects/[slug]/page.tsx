@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PageShell from "@/components/PageShell";
-import Placeholder from "@/components/Placeholder";
-import { getProject, getProjects } from "@/lib/store";
+import { getProject } from "@/lib/store";
 
-export async function generateStaticParams() {
-  const projects = await getProjects();
-  return projects.map((p) => ({ slug: p.slug }));
-}
+// No generateStaticParams: project content is CMS-backed and edited at runtime
+// via /admin, so these detail pages render on demand (always fresh).
 
 export async function generateMetadata({
   params,
@@ -18,7 +14,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = await getProject(slug);
   return {
-    title: project ? `${project.title} — EWB UVM` : "Project — EWB UVM",
+    title: project ? `${project.title} · EWB UVM` : "Project · EWB UVM",
     description: project?.summary,
   };
 }
@@ -32,62 +28,66 @@ export default async function ProjectDetail({
   const project = await getProject(slug);
   if (!project || !project.published) notFound();
 
-  return (
-    <PageShell eyebrow={project.eyebrow} title={project.title} narrow={false} image={project.heroImage}>
-      <div className="ewb-wrap-narrow" style={{ paddingInline: 0 }}>
-        <p className="ewb-lede">{project.summary}</p>
-        <div style={{ display: "flex", gap: "0.6rem", marginTop: "1rem" }}>
-          <span className="ewb-tag">{project.status}</span>
-          <span className="ewb-tag" style={{ background: "transparent" }}>
-            {project.location}
-          </span>
-        </div>
+  const hero = project.heroImage || `/photos/projects/${project.slug}.jpg`;
 
-        {project.sections.map((s) => (
-          <div key={s.heading}>
-            <h2>{s.heading}</h2>
-            <p>{s.body}</p>
-          </div>
+  return (
+    <article className="proj">
+      <header className="proj-hero">
+        <div
+          className="proj-hero-bg"
+          style={{ backgroundImage: `url(${hero})` }}
+        />
+        <div className="proj-hero-scrim" />
+        <div className="proj-hero-inner">
+          {project.eyebrow && (
+            <p className="proj-hero-eyebrow">{project.eyebrow}</p>
+          )}
+          <h1 className="proj-hero-title">{project.title}</h1>
+          <p className="proj-hero-meta">
+            {project.status} · {project.location}
+          </p>
+        </div>
+      </header>
+
+      <div className="proj-body">
+        {project.sections.map((s, i) => (
+          <section
+            key={s.heading}
+            className={`proj-section${
+              s.image ? (i % 2 === 1 ? " is-flip" : "") : " is-text"
+            }`}
+          >
+            <div className="proj-section-text">
+              <h2 className="proj-section-heading">{s.heading}</h2>
+              <p className="proj-section-body">{s.body}</p>
+            </div>
+            {s.image && (
+              <div className="proj-section-media">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.image} alt={s.heading} loading="lazy" />
+              </div>
+            )}
+          </section>
         ))}
 
-        {project.statusItems.length > 0 && (
-          <>
-            <h2>Project status</h2>
-            <ul>
-              {project.statusItems.map((item, i) => (
-                <li key={i}>→ {item}</li>
+        {project.technicalDrawings && project.technicalDrawings.length > 0 && (
+          <section className="proj-tech">
+            <h2 className="proj-section-heading">Technical drawings</h2>
+            <div className="proj-tech-grid">
+              {project.technicalDrawings.map((src, i) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={i} src={src} alt="Technical drawing" loading="lazy" />
               ))}
-            </ul>
-          </>
+            </div>
+          </section>
         )}
-      </div>
 
-      {project.stats.length > 0 && (
-        <>
-          <h2 style={{ marginTop: "var(--space-xl)" }}>By the numbers</h2>
-          <div className="ewb-stats">
-            {project.stats.map((s, i) => (
-              <div className="ewb-stat" key={i}>
-                <div className="ewb-stat-val">{s.value}</div>
-                <div className="ewb-stat-label">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      <div style={{ marginTop: "var(--space-xl)" }}>
-        <Placeholder
-          label="Project photos & map — placeholder · replace via /admin"
-          height="14rem"
-        />
+        <div className="proj-cta">
+          <Link href="/sponsors" className="ewb-btn ewb-btn-gold">
+            Support this project <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
-
-      <div style={{ marginTop: "var(--space-lg)" }}>
-        <Link href="/sponsors" className="ewb-btn ewb-btn-primary">
-          Support this project <span aria-hidden>→</span>
-        </Link>
-      </div>
-    </PageShell>
+    </article>
   );
 }
