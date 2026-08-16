@@ -112,9 +112,9 @@ export const SEED_PROJECTS: Project[] = [
     technicalDrawings: ["/photos/site/rwanda-map.jpg"],
     models: [
       {
-        src: "/models/Current%20Water%20Source.glb",
-        label: "Current Water Source",
-        alt: "3D scan of the current water source at Kajinge, Rwanda",
+        src: "/models/School%20Kitchen.glb",
+        label: "School Kitchen",
+        alt: "3D scan of the school kitchen at Kajinge, Rwanda",
       },
       {
         src: "/models/Damaged%20Tapstand.glb",
@@ -132,9 +132,9 @@ export const SEED_PROJECTS: Project[] = [
         alt: "3D scan of the school handwashing station at Kajinge, Rwanda",
       },
       {
-        src: "/models/School%20Kitchen.glb",
-        label: "School Kitchen",
-        alt: "3D scan of the school kitchen at Kajinge, Rwanda",
+        src: "/models/Current%20Water%20Source.glb",
+        label: "Current Water Source",
+        alt: "3D scan of the current water source at Kajinge, Rwanda",
       },
     ],
     statusItems: [],

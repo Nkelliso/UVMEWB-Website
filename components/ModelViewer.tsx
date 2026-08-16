@@ -17,9 +17,7 @@ declare module "react" {
         alt?: string;
         poster?: string;
         "camera-controls"?: boolean;
-        "auto-rotate"?: boolean;
-        "auto-rotate-delay"?: number;
-        "rotation-per-second"?: string;
+        "camera-orbit"?: string;
         "shadow-intensity"?: string;
         "environment-image"?: string;
         exposure?: string;
@@ -59,9 +57,7 @@ export default function ModelViewer({ src, alt, poster }: ModelViewerProps) {
           alt={alt || "Interactive 3D model"}
           poster={poster}
           camera-controls
-          auto-rotate
-          auto-rotate-delay={0}
-          rotation-per-second="18deg"
+          camera-orbit="0deg 75deg auto"
           shadow-intensity="1"
           exposure="1"
           loading="lazy"
