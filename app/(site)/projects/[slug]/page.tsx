@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProject } from "@/lib/store";
+import ModelViewer from "@/components/ModelViewer";
 
 // No generateStaticParams: project content is CMS-backed and edited at runtime
 // via /admin, so these detail pages render on demand (always fresh).
@@ -77,6 +78,24 @@ export default async function ProjectDetail({
               {project.technicalDrawings.map((src, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img key={i} src={src} alt="Technical drawing" loading="lazy" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {project.models && project.models.length > 0 && (
+          <section className="proj-model-section">
+            <h2 className="proj-section-heading">Explore in 3D</h2>
+            <p className="proj-model-caption">
+              Photogrammetry scans captured on the ground in Kajinge. Drag to
+              orbit, scroll to zoom.
+            </p>
+            <div className="proj-models-grid">
+              {project.models.map((m) => (
+                <figure key={m.src} className="proj-model-item">
+                  <figcaption className="proj-model-label">{m.label}</figcaption>
+                  <ModelViewer src={m.src} alt={m.alt || m.label} poster={m.poster} />
+                </figure>
               ))}
             </div>
           </section>

@@ -1001,6 +1001,16 @@ body {
   backdrop-filter: blur(10px);
   border-bottom: 1px solid oklch(100% 0 0 / 0.12);
 }
+/* While the mobile drawer is open, the header must NOT establish a containing
+   block for its position:fixed descendant (.imm-nav). A `backdrop-filter` or
+   `transform` on an ancestor retargets fixed positioning to that ancestor's box
+   (~72px tall), which shrinks the drawer and clips its contents. Neutralize both
+   so the drawer sizes to the viewport again. Must come after the rules above to
+   win on equal specificity. */
+.imm-header[data-menu-open="true"] {
+  backdrop-filter: none;
+  transform: none;
+}
 .imm-header-inner {
   display: flex;
   align-items: center;
@@ -1295,6 +1305,67 @@ body {
   background: var(--paper);
   display: block;
 }
+.proj-model-section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+}
+.proj-model {
+  margin-top: 1.5rem;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.proj-model model-viewer {
+  --poster-color: transparent;
+  display: block;
+}
+.proj-model-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--ink-soft, #6b6b6b);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.proj-model-caption {
+  margin-top: 1rem;
+  max-width: 60ch;
+  color: var(--ink-soft, #6b6b6b);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.proj-models-grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.proj-model-item {
+  margin: 0;
+}
+/* Label sits directly above its viewer; drop the single-model top margin. */
+.proj-model-item .proj-model {
+  margin-top: 0;
+}
+.proj-model-label {
+  margin-bottom: 0.6rem;
+  color: var(--ink, #1a1a1a);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+@media (max-width: 760px) {
+  .proj-models-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .proj-cta {
   max-width: 1180px;
   margin: 0 auto;
@@ -1944,14 +2015,15 @@ body {
     padding-block: 0.9rem;
     flex: 1;
   }
+  /* carets aren't needed — every submenu is expanded by default in the drawer */
   .imm-nav-caret {
-    display: inline-flex;
-    width: 2.75rem;
-    height: 2.75rem;
-    font-size: 0.85rem;
+    display: none;
   }
-  /* dropdowns flow inline as an accordion inside the drawer */
-  .imm-dropdown {
+  /* dropdowns are always fully unravelled inline inside the drawer, so the whole
+     menu is visible at once when the hamburger opens (no per-item tapping) */
+  .imm-dropdown,
+  .imm-dropdown[data-open="false"] {
+    display: block;
     position: static;
     padding-top: 0;
   }
@@ -1964,6 +2036,7 @@ body {
     padding: 0 0 0.6rem 0.6rem;
   }
   .imm-dropdown-link {
+    text-align: left;
     font-size: 0.9rem;
   }
   .imm-brand small {

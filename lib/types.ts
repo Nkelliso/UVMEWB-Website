@@ -49,6 +49,20 @@ export interface Project {
   navLabel?: string;
   /** Technical drawings / maps shown in their own section. */
   technicalDrawings?: string[];
+  /** Optional interactive 3D models (glTF/GLB) shown in their own section. */
+  models?: ProjectModel[];
+}
+
+/** One interactive 3D model shown in the project's "Explore in 3D" section. */
+export interface ProjectModel {
+  /** Path under /public (URL-encode spaces) or a full URL to a .glb/.gltf file. */
+  src: string;
+  /** Label shown above the viewer (defaults to the file's name). */
+  label: string;
+  /** Accessible description of what the model shows. */
+  alt?: string;
+  /** Optional still image shown before the model loads. */
+  poster?: string;
 }
 
 export interface Sponsor {

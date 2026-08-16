@@ -50,3 +50,5 @@ next-env.d.ts
 
 # local-only photo comparison samples
 public/photos/_vibrancy-sample/
+
+.vercel
