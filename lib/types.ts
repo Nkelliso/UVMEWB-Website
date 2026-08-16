@@ -92,6 +92,20 @@ export interface SiteSettings {
    *  headers (keys: projects, giving, join, about, sponsors, contact). Editable
    *  via /admin/photos; falls back to the /photos defaults when unset. */
   sectionImages?: Record<string, string>;
+  /** Editable copy for the homepage's scrolling PosterSection stack on "/".
+   *  Any blank field falls back to the built-in default text. Section images
+   *  are set in /admin/photos (sectionImages); the hero uses heroHeading /
+   *  heroSubline / heroImages above. */
+  home?: HomeCopy;
+}
+
+/** Text for the homepage's scrolling sections (see SiteSettings.home). */
+export interface HomeCopy {
+  projectsTitle?: string;
+  givingTitle?: string;
+  givingBody?: string;
+  joinTitle?: string;
+  joinBody?: string;
 }
 
 export interface ContactSubmission {

@@ -7,8 +7,13 @@ export interface EditablePage {
   path: string;
 }
 
+// NOTE: "home" is intentionally NOT here. The canonical "/" is a hand-built
+// PosterSection layout (app/(site)/page.tsx), not a Puck page — its text is
+// edited under Site Settings ("Home page sections") and its images under Photos.
+// Listing it here would advertise a drag-and-drop "Edit layout" that doesn't
+// touch the live homepage. (The reference editions /uvm, /cornell, /stevens
+// still render the Puck "home" data directly.)
 export const EDITABLE_PAGES: EditablePage[] = [
-  { slug: "home", title: "Home", path: "/" },
   { slug: "about", title: "About", path: "/about" },
   {
     slug: "mission-statement",

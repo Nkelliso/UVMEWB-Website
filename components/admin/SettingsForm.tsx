@@ -3,11 +3,14 @@
 import { useState } from "react";
 import AdminChrome, { Field, ImageField } from "./AdminChrome";
 import { saveSettingsAction } from "@/app/admin/actions";
-import type { SiteSettings } from "@/lib/types";
+import type { SiteSettings, HomeCopy } from "@/lib/types";
 
 export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [s, setS] = useState<SiteSettings>(initial);
   const set = (patch: Partial<SiteSettings>) => setS((p) => ({ ...p, ...patch }));
+  const home = s.home ?? {};
+  const setHome = (patch: Partial<HomeCopy>) =>
+    setS((p) => ({ ...p, home: { ...p.home, ...patch } }));
 
   return (
     <AdminChrome
@@ -44,6 +47,45 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
       <p className="text-xs text-neutral-400 -mt-1 mb-3">
         Tip: use <b>Photos</b> in the admin to crop &amp; color-adjust before placing.
       </p>
+
+      <hr className="my-6 border-neutral-300" />
+      <p className="text-xs uppercase tracking-wide text-neutral-500 mb-1">Home page sections</p>
+      <p className="text-xs text-neutral-400 mb-3">
+        The scrolling sections below the hero. Leave a field blank to keep the
+        default wording. Section photos are set in <b>Photos</b>.
+      </p>
+      <Field
+        label="Projects section — heading"
+        value={home.projectsTitle ?? ""}
+        onChange={(v) => setHome({ projectsTitle: v })}
+        placeholder="Projects, near and far"
+      />
+      <Field
+        label="Giving section — heading"
+        value={home.givingTitle ?? ""}
+        onChange={(v) => setHome({ givingTitle: v })}
+        placeholder="Giving"
+      />
+      <Field
+        label="Giving section — text"
+        value={home.givingBody ?? ""}
+        onChange={(v) => setHome({ givingBody: v })}
+        placeholder="Every gift trains the next generation of engineers while changing lives in the communities we serve."
+        textarea
+      />
+      <Field
+        label="Join section — heading"
+        value={home.joinTitle ?? ""}
+        onChange={(v) => setHome({ joinTitle: v })}
+        placeholder="Join us"
+      />
+      <Field
+        label="Join section — text"
+        value={home.joinBody ?? ""}
+        onChange={(v) => setHome({ joinBody: v })}
+        placeholder="Want to join the chapter, partner with us, or support a project? We'd love to hear from you."
+        textarea
+      />
     </AdminChrome>
   );
 }

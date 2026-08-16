@@ -24,6 +24,10 @@ export default async function ImmersiveHome() {
   const img = (key: string, fallback: string) =>
     settings.sectionImages?.[key] || fallback;
 
+  // Section copy is editable via /admin/settings ("Home page sections"); any
+  // blank field falls back to the built-in default text below.
+  const home = settings.home ?? {};
+
   return (
     <>
       <PosterSection
@@ -46,7 +50,7 @@ export default async function ImmersiveHome() {
         warm
         parallaxStrength={STRENGTH}
         image={img("projects", "/photos/projects.jpg")}
-        title="Projects, near and far"
+        title={home.projectsTitle || "Projects, near and far"}
         strip={projectNames}
         actions={[
           { label: "See our projects", href: `${BASE}/projects`, variant: "gold" },
@@ -58,8 +62,11 @@ export default async function ImmersiveHome() {
         warm
         parallaxStrength={STRENGTH}
         image={img("giving", "/photos/giving.jpg")}
-        title="Giving"
-        sub="Every gift trains the next generation of engineers while changing lives in the communities we serve."
+        title={home.givingTitle || "Giving"}
+        sub={
+          home.givingBody ||
+          "Every gift trains the next generation of engineers while changing lives in the communities we serve."
+        }
         actions={[
           { label: "Support our work", href: `${BASE}/sponsors`, variant: "gold" },
         ]}
@@ -69,8 +76,11 @@ export default async function ImmersiveHome() {
         short
         parallaxStrength={STRENGTH}
         image={img("join", "/photos/join.jpg")}
-        title="Join us"
-        sub="Want to join the chapter, partner with us, or support a project? We'd love to hear from you."
+        title={home.joinTitle || "Join us"}
+        sub={
+          home.joinBody ||
+          "Want to join the chapter, partner with us, or support a project? We'd love to hear from you."
+        }
         actions={[
           { label: "Get in touch", href: `${BASE}/contact`, variant: "gold" },
         ]}
