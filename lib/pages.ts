@@ -11,8 +11,7 @@ export interface EditablePage {
 // PosterSection layout (app/(site)/page.tsx), not a Puck page — its text is
 // edited under Site Settings ("Home page sections") and its images under Photos.
 // Listing it here would advertise a drag-and-drop "Edit layout" that doesn't
-// touch the live homepage. (The reference editions /uvm, /cornell, /stevens
-// still render the Puck "home" data directly.)
+// touch the live homepage.
 export const EDITABLE_PAGES: EditablePage[] = [
   { slug: "about", title: "About", path: "/about" },
   {
@@ -47,13 +46,9 @@ function shortLabel(title: string): string {
 }
 
 /** Build the top nav. Projects dropdown is populated from live project data so
- *  adding a project in /admin updates the menu everywhere.
- *
- *  `prefix` lets a parallel route tree (e.g. the `/cornell` design version) reuse
- *  the same nav with its own path root. Default "" preserves the canonical site. */
-export function buildNav(projects: Project[], prefix = ""): NavItem[] {
-  const p = (href: string) =>
-    prefix ? (href === "/" ? prefix : `${prefix}${href}`) : href;
+ *  adding a project in /admin updates the menu everywhere. */
+export function buildNav(projects: Project[]): NavItem[] {
+  const p = (href: string) => href;
 
   const projectChildren: NavChild[] = [
     { label: "All Projects", href: p("/projects") },

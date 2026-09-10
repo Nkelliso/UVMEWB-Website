@@ -5,7 +5,7 @@ import type { Data } from "@measured/puck";
 import { puckConfig } from "@/lib/puck-config";
 
 /** Prefix internal ("/"-rooted) hrefs in Puck props with a route base so a
- *  parallel tree (e.g. "/stevens") keeps its body CTAs inside that tree.
+ *  site is served from the root, so this is "" in practice.
  *  Default basePath "" is a no-op — the canonical site renders unchanged. */
 function withBasePath(data: Data, basePath: string): Data {
   if (!basePath) return data;

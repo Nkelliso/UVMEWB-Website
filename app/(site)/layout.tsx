@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import ImmersiveHeader from "@/components/immersive/ImmersiveHeader";
 import ImmersiveFooter from "@/components/immersive/ImmersiveFooter";
-import EditionSwitcher from "@/components/EditionSwitcher";
 import { getProjects, getSettings } from "@/lib/store";
 import { buildNav } from "@/lib/pages";
 
@@ -16,6 +15,32 @@ const immersiveDisplay = localFont({
     { path: "../fonts/montserrat-400.woff2", weight: "400", style: "normal" },
     { path: "../fonts/montserrat-500.woff2", weight: "500", style: "normal" },
     { path: "../fonts/montserrat-600.woff2", weight: "600", style: "normal" },
+  ],
+});
+
+/** Button face. Manrope, not the Montserrat display voice — it carries real 700
+ *  and 800 weights (Montserrat is self-hosted at 300–600, so bold was being
+ *  synthesised) and its caps are wider and squarer, which is what the solid UVM
+ *  buttons want. Scoped to its own variable so the theme's --font-display
+ *  override doesn't reach it. */
+const buttonFace = localFont({
+  variable: "--font-button",
+  display: "swap",
+  src: [
+    { path: "../fonts/manrope-700.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/manrope-800.woff2", weight: "800", style: "normal" },
+  ],
+});
+
+/** Hero headline face. Oswald — the condensed grotesque the Cal Poly source uses
+ *  for its big photo titles. Condensed caps are ~70% the width of Montserrat's,
+ *  which is what lets the one-line lockup run large. Google ships Oswald as a
+ *  single variable file covering 200-700, so one woff2 serves every weight. */
+const heroFace = localFont({
+  variable: "--font-hero",
+  display: "swap",
+  src: [
+    { path: "../fonts/oswald-variable.woff2", weight: "200 700", style: "normal" },
   ],
 });
 
@@ -36,7 +61,9 @@ export default async function SiteLayout({
   const nav = buildNav(projects).filter((item) => item.href !== "/");
 
   return (
-    <div className={`theme-immersive ${immersiveDisplay.variable}`}>
+    <div
+      className={`theme-immersive ${immersiveDisplay.variable} ${buttonFace.variable} ${heroFace.variable}`}
+    >
       <ImmersiveHeader
         nav={nav}
         brand={settings.chapterName}
@@ -45,7 +72,6 @@ export default async function SiteLayout({
       />
       <main>{children}</main>
       <ImmersiveFooter settings={settings} base="" />
-      <EditionSwitcher />
     </div>
   );
 }

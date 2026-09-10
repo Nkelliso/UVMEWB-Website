@@ -27,7 +27,7 @@ export const SEED_SETTINGS: SiteSettings = {
     "https://www.linkedin.com/company/engineers-without-borders-uvm/posts/?feedView=all",
   sponsorshipPackageUrl: "/sponsorship-package.pdf",
   logoUrl: "/logo.png",
-  heroHeading: "Engineering that listens first.",
+  heroHeading: "Engineers Without Borders",
   heroSubline:
     "Student engineers, designers, and organizers at the University of Vermont, building lasting infrastructure with communities around the world.",
   heroImages: ["/photos/site/home-hero-team.jpg"],

@@ -4,6 +4,7 @@ import { useState } from "react";
 import AdminChrome, { Field, ImageField } from "./AdminChrome";
 import { saveSettingsAction } from "@/app/admin/actions";
 import type { SiteSettings, HomeCopy } from "@/lib/types";
+import { HOME_COPY } from "@/lib/home-copy";
 
 export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const [s, setS] = useState<SiteSettings>(initial);
@@ -58,32 +59,39 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
         label="Projects section — heading"
         value={home.projectsTitle ?? ""}
         onChange={(v) => setHome({ projectsTitle: v })}
-        placeholder="Projects, near and far"
+        placeholder={HOME_COPY.projectsTitle}
+      />
+      <Field
+        label="Projects section — text"
+        value={home.projectsBody ?? ""}
+        onChange={(v) => setHome({ projectsBody: v })}
+        placeholder={HOME_COPY.projectsBody}
+        textarea
       />
       <Field
         label="Giving section — heading"
         value={home.givingTitle ?? ""}
         onChange={(v) => setHome({ givingTitle: v })}
-        placeholder="Giving"
+        placeholder={HOME_COPY.givingTitle}
       />
       <Field
         label="Giving section — text"
         value={home.givingBody ?? ""}
         onChange={(v) => setHome({ givingBody: v })}
-        placeholder="Every gift trains the next generation of engineers while changing lives in the communities we serve."
+        placeholder={HOME_COPY.givingBody}
         textarea
       />
       <Field
         label="Join section — heading"
         value={home.joinTitle ?? ""}
         onChange={(v) => setHome({ joinTitle: v })}
-        placeholder="Join us"
+        placeholder={HOME_COPY.joinTitle}
       />
       <Field
         label="Join section — text"
         value={home.joinBody ?? ""}
         onChange={(v) => setHome({ joinBody: v })}
-        placeholder="Want to join the chapter, partner with us, or support a project? We'd love to hear from you."
+        placeholder={HOME_COPY.joinBody}
         textarea
       />
     </AdminChrome>

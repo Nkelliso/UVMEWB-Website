@@ -102,6 +102,7 @@ export interface SiteSettings {
 /** Text for the homepage's scrolling sections (see SiteSettings.home). */
 export interface HomeCopy {
   projectsTitle?: string;
+  projectsBody?: string;
   givingTitle?: string;
   givingBody?: string;
   joinTitle?: string;

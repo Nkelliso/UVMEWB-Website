@@ -899,11 +899,22 @@ body {
   /* immersive-only tokens */
   --imm-track: 0.08em;
   --imm-track-wide: 0.22em;
+  /* Soft, even scrim: enough top/bottom shading for text legibility, but WITHOUT
+     the heavy ~86% black at the bottom that caused a hard light/dark seam where
+     one photo meets the next. The last section overrides this (.is-tofooter) to
+     keep the deep fade into the black footer. */
   --poster-scrim: linear-gradient(
     180deg,
-    oklch(20% 0.03 158 / 0.42) 0%,
-    oklch(18% 0.03 158 / 0.18) 38%,
-    oklch(14% 0.03 158 / 0.86) 100%
+    oklch(18% 0.03 158 / 0.36) 0%,
+    oklch(16% 0.03 158 / 0.12) 42%,
+    oklch(16% 0.03 158 / 0.38) 100%
+  );
+  /* Deep fade to near-black at the bottom — only for the final section → footer. */
+  --poster-scrim-footer: linear-gradient(
+    180deg,
+    oklch(18% 0.03 158 / 0.36) 0%,
+    oklch(16% 0.03 158 / 0.14) 40%,
+    oklch(12% 0.03 158 / 0.9) 100%
   );
   --poster-field: linear-gradient(
     155deg,
@@ -1142,7 +1153,9 @@ body {
 
 .imm-dropdown {
   position: absolute;
-  left: 0;
+  /* Anchor to the RIGHT edge of the nav word so the panel opens leftward and its
+     right edge lines up with the end of the word (Cornell-style). */
+  right: 0;
   top: 100%;
   padding-top: 0.85rem;
 }
@@ -1415,17 +1428,25 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   z-index: -2;
+  /* will-change is set imperatively in PosterSection only while parallax is
+     active, so the large photo isn't layer-promoted on phones / reduced-motion. */
 }
 /* pronounced Cal-Poly-style parallax reveal: bigger travel needs a bigger
-   vertical bleed so the enlarged translate never exposes a photo edge */
+   vertical bleed so the enlarged translate never exposes a photo edge. -42%
+   covers the STRENGTH=210 travel even on the short (78svh) Join poster on a
+   short desktop viewport. */
 .imm-poster.is-parallax .imm-poster-bg {
-  inset: -24% 0;
+  inset: -42% 0;
 }
 .imm-poster-scrim {
   position: absolute;
   inset: 0;
   background: var(--poster-scrim);
   z-index: -1;
+}
+/* Final section only: keep the deep fade into the black footer. */
+.imm-poster.is-tofooter .imm-poster-scrim {
+  background: var(--poster-scrim-footer);
 }
 .imm-poster-content {
   width: 100%;
@@ -1441,9 +1462,9 @@ body {
   gap: var(--space-md);
 }
 .imm-poster.is-hero .imm-poster-content {
-  justify-content: flex-end;
-  align-items: flex-start;
-  text-align: left;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 /* composition variety across the poster stack (not all centred) */
 .imm-poster.align-left .imm-poster-content {
@@ -1478,19 +1499,55 @@ body {
   line-height: 1.02;
   font-size: var(--text-mega);
   max-width: 20ch;
-  overflow-wrap: anywhere;
+  /* Break only between words, never mid-letter (fixes "ENGINEERIN/G"). */
+  overflow-wrap: break-word;
   min-width: 0;
   text-wrap: balance;
   text-shadow: 0 2px 30px oklch(14% 0.03 158 / 0.5);
 }
+/* The hero headline is a single-line lockup. Sizing off vw (not the shared
+   --text-mega clamp) is what keeps "ENGINEERS WITHOUT BORDERS at UVM" on one
+   line at every desktop width: ~19em of tracked uppercase + suffix against
+   ~86% of the viewport. Below the phone breakpoint one line would be
+   unreadably small, so it wraps there instead. */
 .imm-poster.is-hero .imm-poster-title {
-  max-width: 16ch;
+  max-width: none;
+  white-space: nowrap;
+  font-family: var(--font-hero), "Oswald", system-ui, sans-serif;
+  font-weight: 500;
+  /* Condensed caps are far narrower than Montserrat's, so the same one-line
+     lockup fits at ~6vw instead of 4.4vw. Tracking drops too — wide tracking
+     works against a condensed face. */
+  font-size: min(6vw, 7rem);
+  letter-spacing: 0.03em;
+}
+@media (max-width: 760px) {
+  .imm-poster.is-hero .imm-poster-title {
+    white-space: normal;
+    font-size: var(--text-mega);
+  }
+}
+/* Small trailing qualifier inside the hero heading ("… at UVM"). Sized in `em`
+   so it tracks the title's clamp() instead of needing its own breakpoints. */
+.imm-poster-title-suffix {
+  display: inline-block;
+  margin-left: 0.45em;
+  font-size: 0.26em;
+  font-weight: 400;
+  letter-spacing: var(--imm-track-wide);
+  color: var(--chalk);
+  opacity: 0.82;
+  white-space: nowrap;
 }
 .imm-poster-sub {
   max-width: 42ch;
   font-size: 1.15rem;
   line-height: 1.5;
-  color: var(--chalk-soft);
+  /* Near-white + the title's soft halo. --chalk-soft (80% L, green-tinted) read
+     as muddy gray over the photos; size and the uppercase display face carry the
+     title/sub hierarchy on their own, so the sub doesn't need to be dimmer. */
+  color: var(--chalk);
+  text-shadow: 0 1px 18px oklch(14% 0.03 158 / 0.62);
 }
 .imm-poster-actions {
   display: flex;
@@ -1534,9 +1591,14 @@ body {
 
 /* immersive buttons — larger, hard-edged, still UVM green/gold (solid, not ghost) */
 .theme-immersive .ewb-btn {
-  padding: 1rem 1.75rem;
-  letter-spacing: var(--imm-track-wide);
-  font-family: var(--font-display);
+  padding: 1.15rem 2.4rem;
+  /* Thick and tight, per the Cal Poly source: 800 is Manrope's heaviest real
+     weight, and the wide --imm-track-wide tracking that suits the thin display
+     voice reads as scattered on heavy caps, so it drops to near-zero here. */
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  font-family: var(--font-button), "Manrope", system-ui, sans-serif;
+  font-weight: 800;
 }
 
 /* focus ring tuned for the dark photographic bands — gold clears 3:1 over the
