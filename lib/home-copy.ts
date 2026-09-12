@@ -8,10 +8,10 @@
 export const HOME_COPY = {
   projectsTitle: "Projects",
   projectsBody:
-    "Our projects reach from Kajinge, Rwanda to the Catskills of New York to the greater Burlington area.",
+    "Our projects stretch from Kajinge, Rwanda to the New York Catskills to the greater Burlington area.",
   givingTitle: "Giving",
   givingBody:
-    "Every gift trains the next generation of engineers while changing lives in the communities we serve.",
+    "Each gift supports the next generation of engineers and changemakers while changing lives in disadvantaged communities.",
   joinTitle: "Join us",
   joinBody:
     "Want to join the chapter, partner with us, or support a project? We'd love to hear from you.",

@@ -29,7 +29,7 @@ export const SEED_SETTINGS: SiteSettings = {
   logoUrl: "/logo.png",
   heroHeading: "Engineers Without Borders",
   heroSubline:
-    "Student engineers, designers, and organizers at the University of Vermont, building lasting infrastructure with communities around the world.",
+    "We are passionate students working to support community-driven engineering projects and meaningful change in the communities we serve.",
   heroImages: ["/photos/site/home-hero-team.jpg"],
   sectionImages: {
     projects: "/photos/hero.jpg",

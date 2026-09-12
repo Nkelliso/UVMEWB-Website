@@ -13,16 +13,20 @@ export default function PageShell({
   children,
   narrow = true,
   image,
+  tall = false,
 }: {
   eyebrow: string;
   title: string;
   children: ReactNode;
   narrow?: boolean;
   image?: string;
+  /** Grow the photographic header band to a 2:1 crop anchored at the top of the
+   *  photo, so most of the image shows instead of a thin band. */
+  tall?: boolean;
 }) {
   return (
     <div className="ewb-shell">
-      <div className="ewb-shell-head">
+      <div className={`ewb-shell-head${tall ? " is-tall" : ""}`}>
         {image && (
           <>
             <div

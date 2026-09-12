@@ -960,6 +960,19 @@ body {
   position: relative;
   z-index: 1;
 }
+/* Tall variant: show the photo, not a letterbox slice across people's faces.
+   about.jpg is 3:2, so a 2:1 band reveals exactly the top 75% of its height
+   (2/1 = 1.5 / 0.75) and holds that at every viewport width — unlike a fixed
+   svh height, which drifts with window shape. Anchored to the top of the photo
+   rather than the global 22% bias. */
+.theme-immersive .ewb-shell-head.is-tall {
+  aspect-ratio: 2 / 1;
+  min-height: 46svh;
+  max-height: 92svh;
+}
+.ewb-shell-head.is-tall .ewb-shell-bg {
+  background-position: center top;
+}
 .ewb-shell-bg {
   position: absolute;
   inset: 0;
@@ -1004,8 +1017,37 @@ body {
   opacity: 0;
   pointer-events: none;
 }
+/* Transparent over the opening photo — but "transparent" alone is not safe: the
+   home hero's top band is bright sky, where white nav text measured 1.9-2.4:1.
+   A gradient scrim carried on a pseudo-element (so it can bleed below the bar and
+   fade out instead of ending on a hard edge) puts the links back over 4:1 while
+   the photo still reads as full-bleed. */
 .imm-header[data-over-dark="true"] {
   background: transparent;
+}
+.imm-header[data-over-dark="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -3.5rem 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    oklch(0% 0 0 / 0.8) 0%,
+    oklch(0% 0 0 / 0.72) 52%,
+    oklch(0% 0 0 / 0) 100%
+  );
+}
+/* Belt and braces over the brightest slices of sky, where the gradient alone
+   still lands under 4.5:1. */
+.imm-header[data-over-dark="true"] .imm-nav-link,
+.imm-header[data-over-dark="true"] .imm-brand {
+  text-shadow: 0 1px 10px oklch(0% 0 0 / 0.75);
+}
+/* The drawer paints its own full-viewport surface; the fade would show through
+   it as a band. */
+.imm-header[data-menu-open="true"]::before {
+  display: none;
 }
 .imm-header[data-over-dark="false"] {
   background: oklch(0% 0 0 / 0.92);
@@ -1592,13 +1634,13 @@ body {
 /* immersive buttons — larger, hard-edged, still UVM green/gold (solid, not ghost) */
 .theme-immersive .ewb-btn {
   padding: 1.15rem 2.4rem;
-  /* Thick and tight, per the Cal Poly source: 800 is Manrope's heaviest real
-     weight, and the wide --imm-track-wide tracking that suits the thin display
-     voice reads as scattered on heavy caps, so it drops to near-zero here. */
+  /* Thick and tight, per the Cal Poly source: the wide --imm-track-wide
+     tracking that suits the thin display voice reads as scattered on heavy
+     caps, so it drops to near-zero here. */
   font-size: 1.05rem;
   letter-spacing: 0.02em;
-  font-family: var(--font-button), "Manrope", system-ui, sans-serif;
-  font-weight: 800;
+  font-family: var(--font-button), "Nunito Sans", system-ui, sans-serif;
+  font-weight: 700;
 }
 
 /* focus ring tuned for the dark photographic bands — gold clears 3:1 over the

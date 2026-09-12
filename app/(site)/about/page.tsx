@@ -15,6 +15,7 @@ export default async function AboutPage() {
       eyebrow="About"
       title="Our chapter"
       narrow={false}
+      tall
       image={settings.sectionImages?.about || "/photos/about.jpg"}
     >
       <PageRenderer data={data} />

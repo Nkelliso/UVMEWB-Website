@@ -18,17 +18,17 @@ const immersiveDisplay = localFont({
   ],
 });
 
-/** Button face. Manrope, not the Montserrat display voice — it carries real 700
- *  and 800 weights (Montserrat is self-hosted at 300–600, so bold was being
- *  synthesised) and its caps are wider and squarer, which is what the solid UVM
- *  buttons want. Scoped to its own variable so the theme's --font-display
- *  override doesn't reach it. */
+/** Button face. Nunito Sans, not the Montserrat display voice — Montserrat is
+ *  self-hosted at 300–600, so the buttons' bold was being synthesised. Chosen
+ *  over Manrope and Poppins by comparing every self-hosted face at real button
+ *  size; its humanist letterforms read warmer than the geometric options
+ *  without losing weight. Scoped to its own variable so the theme's
+ *  --font-display override doesn't reach it. */
 const buttonFace = localFont({
   variable: "--font-button",
   display: "swap",
   src: [
-    { path: "../fonts/manrope-700.woff2", weight: "700", style: "normal" },
-    { path: "../fonts/manrope-800.woff2", weight: "800", style: "normal" },
+    { path: "../fonts/nunito-sans-700.woff2", weight: "700", style: "normal" },
   ],
 });
 

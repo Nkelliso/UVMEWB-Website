@@ -39,8 +39,7 @@ export default async function ImmersiveHome() {
         sub={settings.heroSubline}
         showScroll
         actions={[
-          { label: "Who we are", href: `${BASE}/about`, variant: "gold" },
-          { label: "Join us", href: `${BASE}/contact`, variant: "ghost" },
+          { label: "Learn more", href: `${BASE}/about`, variant: "gold" },
         ]}
       />
 
