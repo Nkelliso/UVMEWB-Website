@@ -11,7 +11,7 @@ export default function ContactForm() {
   if (state.ok) {
     return (
       <div className="ewb-note" style={{ fontSize: "1.05rem" }}>
-        ✅ Thanks — your message is on its way. We&apos;ll be in touch soon.
+        ✅ Thanks, your message is on its way. We&apos;ll be in touch soon.
       </div>
     );
   }

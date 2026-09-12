@@ -966,6 +966,11 @@ body {
    svh height, which drifts with window shape. Anchored to the top of the photo
    rather than the global 22% bias. */
 .theme-immersive .ewb-shell-head.is-tall {
+  /* width must be pinned. With aspect-ratio set and width left auto, a binding
+     max-height makes the browser shrink the WIDTH to preserve the ratio, so the
+     band stopped short of both page edges on short windows. Pinned, the ratio
+     drives height only and max-height simply crops more of the photo. */
+  width: 100%;
   aspect-ratio: 2 / 1;
   min-height: 46svh;
   max-height: 92svh;
