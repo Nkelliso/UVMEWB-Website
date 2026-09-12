@@ -5,7 +5,7 @@ import {
   isSupabaseConfigured,
   writeClient,
   readClient,
-  isWriteMisconfigured,
+  isPartiallyConfigured,
 } from "./supabase/server";
 
 /**
@@ -71,11 +71,11 @@ export async function saveImage(
   filename: string,
   contentType?: string
 ): Promise<{ url: string }> {
-  if (isWriteMisconfigured()) {
+  if (isPartiallyConfigured()) {
     throw new Error(
-      "storage: Supabase is configured for reads but SUPABASE_SERVICE_ROLE_KEY " +
-        "is missing. Refusing to write into public/ — that directory is " +
-        "read-only on Vercel and the upload would be lost anywhere else."
+      "storage: Supabase is only partially configured — set all three env vars " +
+        "or none. Refusing to write into public/, which is read-only on Vercel " +
+        "and ephemeral elsewhere, while reads may be coming from the bucket."
     );
   }
   const name = safeName(filename, contentType);

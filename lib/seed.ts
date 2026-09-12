@@ -29,7 +29,7 @@ export const SEED_SETTINGS: SiteSettings = {
   logoUrl: "/logo.png",
   heroHeading: "Engineers Without Borders",
   heroSubline:
-    "We are passionate students working to support community-driven engineering projects and meaningful change in the communities we serve.",
+    "We're passionate students working to create meaningful change in the communities that we serve.",
   heroImages: ["/photos/site/home-hero-team.jpg"],
   sectionImages: {
     projects: "/photos/hero.jpg",

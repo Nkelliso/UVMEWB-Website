@@ -1,7 +1,7 @@
 import "server-only";
 import fs from "fs";
 import path from "path";
-import { readClient, writeClient, isWriteMisconfigured } from "./supabase/server";
+import { readClient, writeClient, isPartiallyConfigured } from "./supabase/server";
 import {
   SEED_SETTINGS,
   SEED_OFFICERS,
@@ -52,13 +52,15 @@ async function getContent<T>(key: string, fallback: T): Promise<T> {
   }
 }
 
-const WRITE_MISCONFIGURED =
-  "Supabase is configured for reads but SUPABASE_SERVICE_ROLE_KEY is missing. " +
-  "Refusing to fall back to local files: the write would be lost on the next " +
-  "deploy while reads kept coming from the database. Set the service role key.";
+const PARTIAL_CONFIG =
+  "Supabase is only partially configured. Set all three of " +
+  "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and " +
+  "SUPABASE_SERVICE_ROLE_KEY, or leave all three blank for the local-JSON " +
+  "fallback. Refusing to write: with a partial config, reads and writes go to " +
+  "different places and the change is lost silently.";
 
 export async function setContent<T>(key: string, value: T): Promise<void> {
-  if (isWriteMisconfigured()) throw new Error(`[store] ${WRITE_MISCONFIGURED}`);
+  if (isPartiallyConfigured()) throw new Error(`[store] ${PARTIAL_CONFIG}`);
   const client = writeClient();
   if (client) {
     const { error } = await client
@@ -106,7 +108,7 @@ export async function addContactSubmission(
     ...entry,
     createdAt: new Date().toISOString(),
   };
-  if (isWriteMisconfigured()) throw new Error(`[store] ${WRITE_MISCONFIGURED}`);
+  if (isPartiallyConfigured()) throw new Error(`[store] ${PARTIAL_CONFIG}`);
   const client = writeClient();
   if (client) {
     const { error } = await client.from("contact_submissions").insert({

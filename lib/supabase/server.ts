@@ -17,13 +17,21 @@ export function readClient(): SupabaseClient | null {
   return createClient(url, anon, { auth: { persistSession: false } });
 }
 
-/** True when reads are configured but writes are not. This combination is
- *  dangerous rather than merely degraded: getContent() would serve from the
- *  database while setContent() silently fell through to the local-JSON branch,
- *  writing to a filesystem that is read-only on Vercel and ephemeral elsewhere.
- *  Callers must refuse to write rather than take that fallback. */
-export function isWriteMisconfigured(): boolean {
-  return Boolean(url && anon && !service);
+/** True when SOME but not all three vars are set. Any partial configuration
+ *  splits reads from writes, in either direction, and both directions lose
+ *  data silently:
+ *
+ *   - url + anon, no service -> reads hit the database, writes fall through to
+ *     the local-JSON branch and a filesystem that is read-only on Vercel.
+ *   - url + service, no anon -> readClient() is null so reads come from local
+ *     JSON, while writes land in the database. The editor saves successfully
+ *     and the site never shows the change.
+ *
+ *  Neither is a degraded-but-working state, so writes must refuse rather than
+ *  take a fallback that cannot be correct. */
+export function isPartiallyConfigured(): boolean {
+  const set = [url, anon, service].filter(Boolean).length;
+  return set > 0 && set < 3;
 }
 
 /** Write client (service role, bypasses RLS). Server-only; never expose. */
