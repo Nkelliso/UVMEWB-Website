@@ -41,18 +41,24 @@ create policy "contact public insert"
 -- server-side with the service_role key, which bypasses RLS. No admin write
 -- policies are needed here — the app gates writes behind the /admin password.
 
--- ── Seed content ────────────────────────────────────────────────────────────
--- Optional: the app already ships these exact defaults in lib/seed.ts and will
--- fall back to them when a key is missing, so seeding is not required. Insert
--- the settings row here if you want a row to exist immediately:
-insert into public.content (key, value) values
-  ('settings', '{
-    "chapterName": "Engineers Without Borders",
-    "tagline": "The University of Vermont student chapter — designing sustainable infrastructure alongside the communities we serve.",
-    "contactEmail": "ewb@uvm.edu",
-    "instagram": "",
-    "heroHeading": "Engineering that listens first.",
-    "heroSubline": "Student engineers, designers, and organizers at the University of Vermont, building lasting infrastructure with communities around the world.",
-    "heroImages": []
-  }'::jsonb)
-on conflict (key) do nothing;
+-- ── Storage: the `photos` bucket ───────────────────────────────────────────
+-- Uploads go through the service_role key server-side (bypasses RLS), but the
+-- /admin photo picker LISTS the bucket with the anon key, so anon needs select
+-- on objects here. Public = true so getPublicUrl() links resolve for visitors.
+insert into storage.buckets (id, name, public)
+values ('photos', 'photos', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "photos public read" on storage.objects;
+create policy "photos public read"
+  on storage.objects for select
+  to anon
+  using (bucket_id = 'photos');
+
+-- ── No seed content on purpose ─────────────────────────────────────────────
+-- Do NOT insert a `settings` row here. lib/store.ts falls back to lib/seed.ts
+-- whenever a key is missing, so an empty database renders the current site
+-- correctly. A seed row written here would be a SECOND copy of the site copy
+-- that silently overrides seed.ts and goes stale the moment seed.ts changes —
+-- which is exactly what the old version of this file did. The first save from
+-- /admin creates the row with real values.
