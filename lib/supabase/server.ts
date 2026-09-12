@@ -17,6 +17,15 @@ export function readClient(): SupabaseClient | null {
   return createClient(url, anon, { auth: { persistSession: false } });
 }
 
+/** True when reads are configured but writes are not. This combination is
+ *  dangerous rather than merely degraded: getContent() would serve from the
+ *  database while setContent() silently fell through to the local-JSON branch,
+ *  writing to a filesystem that is read-only on Vercel and ephemeral elsewhere.
+ *  Callers must refuse to write rather than take that fallback. */
+export function isWriteMisconfigured(): boolean {
+  return Boolean(url && anon && !service);
+}
+
 /** Write client (service role, bypasses RLS). Server-only; never expose. */
 export function writeClient(): SupabaseClient | null {
   if (!url || !service) return null;

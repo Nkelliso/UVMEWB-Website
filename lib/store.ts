@@ -1,7 +1,7 @@
 import "server-only";
 import fs from "fs";
 import path from "path";
-import { readClient, writeClient } from "./supabase/server";
+import { readClient, writeClient, isWriteMisconfigured } from "./supabase/server";
 import {
   SEED_SETTINGS,
   SEED_OFFICERS,
@@ -52,7 +52,13 @@ async function getContent<T>(key: string, fallback: T): Promise<T> {
   }
 }
 
+const WRITE_MISCONFIGURED =
+  "Supabase is configured for reads but SUPABASE_SERVICE_ROLE_KEY is missing. " +
+  "Refusing to fall back to local files: the write would be lost on the next " +
+  "deploy while reads kept coming from the database. Set the service role key.";
+
 export async function setContent<T>(key: string, value: T): Promise<void> {
+  if (isWriteMisconfigured()) throw new Error(`[store] ${WRITE_MISCONFIGURED}`);
   const client = writeClient();
   if (client) {
     const { error } = await client
@@ -100,6 +106,7 @@ export async function addContactSubmission(
     ...entry,
     createdAt: new Date().toISOString(),
   };
+  if (isWriteMisconfigured()) throw new Error(`[store] ${WRITE_MISCONFIGURED}`);
   const client = writeClient();
   if (client) {
     const { error } = await client.from("contact_submissions").insert({

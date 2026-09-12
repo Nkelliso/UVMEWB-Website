@@ -1,7 +1,12 @@
 import "server-only";
 import fs from "fs";
 import path from "path";
-import { isSupabaseConfigured, writeClient, readClient } from "./supabase/server";
+import {
+  isSupabaseConfigured,
+  writeClient,
+  readClient,
+  isWriteMisconfigured,
+} from "./supabase/server";
 
 /**
  * Image storage adapter. One interface, two backends chosen at runtime:
@@ -66,6 +71,13 @@ export async function saveImage(
   filename: string,
   contentType?: string
 ): Promise<{ url: string }> {
+  if (isWriteMisconfigured()) {
+    throw new Error(
+      "storage: Supabase is configured for reads but SUPABASE_SERVICE_ROLE_KEY " +
+        "is missing. Refusing to write into public/ — that directory is " +
+        "read-only on Vercel and the upload would be lost anywhere else."
+    );
+  }
   const name = safeName(filename, contentType);
   const client = writeClient();
   if (isSupabaseConfigured() && client) {
@@ -83,19 +95,11 @@ export async function saveImage(
   return { url: `${UPLOAD_URL_BASE}/${name}` };
 }
 
-/** List available image URLs for the picker (newest-ish first). */
-export async function listImages(): Promise<string[]> {
-  const client = readClient();
-  if (isSupabaseConfigured() && client) {
-    const { data, error } = await client.storage
-      .from(BUCKET)
-      .list("", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
-    if (error) return [];
-    return (data || [])
-      .filter((o) => o.name && IMG_RE.test(o.name))
-      .map((o) => client.storage.from(BUCKET).getPublicUrl(o.name).data.publicUrl);
-  }
-  // dev: uploaded files first, then the curated /photos library
+/** Images that ship with the repo under public/photos. Served statically in
+ *  every environment, Supabase or not — so the picker must include them in both
+ *  branches. Listing only the bucket made connecting Supabase look like it had
+ *  wiped the photo library. */
+function staticLibrary(): string[] {
   const out: string[] = [];
   const read = (dir: string, urlBase: string) => {
     try {
@@ -107,4 +111,22 @@ export async function listImages(): Promise<string[]> {
   read(UPLOAD_DIR, UPLOAD_URL_BASE);
   read(path.join(process.cwd(), "public", "photos"), "/photos");
   return out;
+}
+
+/** List available image URLs for the picker (newest-ish first). */
+export async function listImages(): Promise<string[]> {
+  const client = readClient();
+  if (isSupabaseConfigured() && client) {
+    const { data, error } = await client.storage
+      .from(BUCKET)
+      .list("", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
+    if (error) return staticLibrary();
+    const uploaded = (data || [])
+      .filter((o) => o.name && IMG_RE.test(o.name))
+      .map((o) => client.storage.from(BUCKET).getPublicUrl(o.name).data.publicUrl);
+    // Bucket uploads first (newest work), then the shipped library.
+    return [...uploaded, ...staticLibrary()];
+  }
+  // dev: uploaded files first, then the curated /photos library
+  return staticLibrary();
 }
