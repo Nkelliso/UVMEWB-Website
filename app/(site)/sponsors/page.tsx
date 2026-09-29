@@ -13,11 +13,19 @@ const BASE = "";
 // Structural page content (the "ways professionals get involved" block). Our own
 // copy + framing — the Cornell layout, our voice. Photos fall back to existing
 // site photos until dedicated ones are placed via /admin.
-const WAYS = [
+const WAYS: {
+  title: string;
+  body: string;
+  image: string;
+  filter?: string;
+}[] = [
   {
     title: "Corporate Partners",
     body: "Fuel our projects through financial support, in-kind donations, and collaborative opportunities. Put your name behind clean water and infrastructure that outlasts us.",
     image: "/photos/giving.jpg",
+    // Source photo is flat and overcast (low contrast, hazy). Correct toward
+    // the same punch the other two WAYS photos already have natively.
+    filter: "saturate(1.3) contrast(1.12) brightness(1.08)",
   },
   {
     title: "Professional Mentors",
@@ -28,13 +36,16 @@ const WAYS = [
     title: "Alumni & Friends",
     body: "Former members and community supporters who keep the mission moving through mentorship, networking, and ongoing project support.",
     image: "/photos/site/cooper-uvm.jpg",
+    // Dusk lighting reads slightly dim next to the other two.
+    filter: "saturate(1.12) brightness(1.1)",
   },
 ];
 
 export default async function SponsorsPage() {
   const [sponsors, settings] = await Promise.all([getSponsors(), getSettings()]);
   const hasPackage = !!settings.sponsorshipPackageUrl;
-  const headerImage = settings.sectionImages?.sponsors || "/photos/sponsors.jpg";
+  // Hardcoded like the "Our work" page header — not settings-driven.
+  const headerImage = "/photos/site/rwanda-schoolkids-road.jpg";
   const namedSponsors = sponsors.filter(
     (s) => s.name && !/your organization|become a sponsor/i.test(s.name)
   );
@@ -52,7 +63,6 @@ export default async function SponsorsPage() {
         <div className="ewb-shell-scrim" />
         <div className="ewb-wrap spon-hero-grid">
           <div className="spon-hero-left">
-            <p className="ewb-eyebrow">Partnership</p>
             <h1>Sponsors</h1>
             {hasPackage ? (
               <a
@@ -92,7 +102,10 @@ export default async function SponsorsPage() {
                 <article key={w.title} className="spon-way">
                   <div
                     className="spon-way-media"
-                    style={{ backgroundImage: `url(${w.image})` }}
+                    style={{
+                      backgroundImage: `url(${w.image})`,
+                      filter: w.filter,
+                    }}
                     role="img"
                     aria-label={w.title}
                   />

@@ -1,17 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitContact, type ContactState } from "@/app/actions";
+import { submitSignup, type ContactState } from "@/app/actions";
 
 const initial: ContactState = { ok: false };
 
-export default function ContactForm() {
-  const [state, formAction, pending] = useActionState(submitContact, initial);
+export default function EmailSignupForm() {
+  const [state, formAction, pending] = useActionState(submitSignup, initial);
 
   if (state.ok) {
     return (
       <div className="ewb-note" style={{ fontSize: "1.05rem" }}>
-        Thanks, your message is on its way. We&apos;ll be in touch soon.
+        You&apos;re on the list. We&apos;ll email you meeting times and news.
       </div>
     );
   }
@@ -25,7 +25,13 @@ export default function ContactForm() {
       </div>
       <div className="ewb-field">
         <label htmlFor="name">Your name</label>
-        <input className="ewb-input" id="name" name="name" required />
+        <input
+          className="ewb-input"
+          id="name"
+          name="name"
+          autoComplete="name"
+          required
+        />
       </div>
       <div className="ewb-field">
         <label htmlFor="email">Email</label>
@@ -34,16 +40,7 @@ export default function ContactForm() {
           id="email"
           name="email"
           type="email"
-          required
-        />
-      </div>
-      <div className="ewb-field">
-        <label htmlFor="message">Message</label>
-        <textarea
-          className="ewb-textarea"
-          id="message"
-          name="message"
-          rows={5}
+          autoComplete="email"
           required
         />
       </div>
@@ -57,7 +54,7 @@ export default function ContactForm() {
         className="ewb-btn ewb-btn-primary"
         disabled={pending}
       >
-        {pending ? "Sending…" : "Send message"} <span aria-hidden>→</span>
+        {pending ? "Signing up…" : "Sign me up"} <span aria-hidden>→</span>
       </button>
     </form>
   );

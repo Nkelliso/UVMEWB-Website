@@ -12,7 +12,6 @@ export default async function AboutPage() {
   const [data, settings] = await Promise.all([getPageData("about"), getSettings()]);
   return (
     <PageShell
-      eyebrow="About"
       title="Our chapter"
       narrow={false}
       tall

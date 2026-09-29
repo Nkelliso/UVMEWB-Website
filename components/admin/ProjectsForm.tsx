@@ -76,11 +76,77 @@ export default function ProjectsForm({ initial }: { initial: Project[] }) {
                     Remove
                   </button>
                 </div>
-                <Field label="Heading" value={sec.heading} onChange={(v) => upd(i, { sections: p.sections.map((s, j) => (j === si ? { ...s, heading: v } : s)) })} />
+                <Row>
+                  <Field label="Heading" value={sec.heading} onChange={(v) => upd(i, { sections: p.sections.map((s, j) => (j === si ? { ...s, heading: v } : s)) })} />
+                  <Field label="Date (timeline layout only)" value={sec.date ?? ""} onChange={(v) => upd(i, { sections: p.sections.map((s, j) => (j === si ? { ...s, date: v } : s)) })} placeholder="Spring 2024" />
+                </Row>
                 <Field label="Body" value={sec.body} onChange={(v) => upd(i, { sections: p.sections.map((s, j) => (j === si ? { ...s, body: v } : s)) })} textarea />
+                <ImageField label="Section photo (optional)" value={sec.image ?? ""} onChange={(v) => upd(i, { sections: p.sections.map((s, j) => (j === si ? { ...s, image: v } : s)) })} />
               </div>
             ))}
             <AddButton label="Add section" onClick={() => upd(i, { sections: [...p.sections, { heading: "", body: "" }] })} />
+
+            <p className="text-xs uppercase tracking-wide text-neutral-500 mt-4 mb-2">Layout</p>
+            <label className="block mb-3">
+              <span className="block text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-1">Page layout</span>
+              <select
+                className="w-full border border-neutral-300 rounded px-3 py-2 bg-white"
+                value={p.layout ?? "standard"}
+                onChange={(e) => upd(i, { layout: e.target.value as Project["layout"] })}
+              >
+                <option value="standard">Standard: alternating photo + text sections</option>
+                <option value="timeline">Timeline: dated entries down a line (past projects)</option>
+              </select>
+            </label>
+            <label className="flex items-center gap-2 mb-3 text-sm">
+              <input type="checkbox" checked={!!p.photoSlots} onChange={(e) => upd(i, { photoSlots: e.target.checked })} />
+              Show a &quot;photo coming soon&quot; slot beside sections without a photo
+            </label>
+
+            <p className="text-xs uppercase tracking-wide text-neutral-500 mt-4 mb-2">Photo carousel</p>
+            {p.gallery === undefined ? (
+              <AddButton label="Add a photo carousel to this page" onClick={() => upd(i, { gallery: [] })} />
+            ) : (
+              <>
+                {p.gallery.length === 0 && (
+                  <p className="text-sm text-neutral-500 mb-2">No photos yet. The page shows labeled slots until you add some.</p>
+                )}
+                {p.gallery.map((src, gi) => (
+                  <div key={gi} className="flex gap-2 items-start">
+                    <div className="flex-1">
+                      <ImageField label={`Photo ${gi + 1}`} value={src} onChange={(v) => upd(i, { gallery: p.gallery!.map((x, j) => (j === gi ? v : x)) })} />
+                    </div>
+                    <button className="text-xs text-red-600 mt-6" onClick={() => upd(i, { gallery: p.gallery!.filter((_, j) => j !== gi) })}>
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <div className="flex gap-4">
+                  <AddButton label="Add photo" onClick={() => upd(i, { gallery: [...p.gallery!, ""] })} />
+                  <button className="text-xs text-red-600" onClick={() => upd(i, { gallery: undefined })}>
+                    Remove carousel
+                  </button>
+                </div>
+              </>
+            )}
+
+            <p className="text-xs uppercase tracking-wide text-neutral-500 mt-4 mb-2">3D models</p>
+            {(p.models ?? []).map((m, mi) => (
+              <div key={mi} className="border border-neutral-200 rounded p-3 mb-2">
+                <div className="flex justify-between">
+                  <span className="text-xs text-neutral-500">Model {mi + 1}</span>
+                  <button className="text-xs text-red-600" onClick={() => upd(i, { models: (p.models ?? []).filter((_, j) => j !== mi) })}>
+                    Remove
+                  </button>
+                </div>
+                <Row>
+                  <Field label="Label" value={m.label} onChange={(v) => upd(i, { models: (p.models ?? []).map((x, j) => (j === mi ? { ...x, label: v } : x)) })} />
+                  <Field label="File URL (.glb)" value={m.src} onChange={(v) => upd(i, { models: (p.models ?? []).map((x, j) => (j === mi ? { ...x, src: v } : x)) })} placeholder="/models/School%20Kitchen.glb" />
+                </Row>
+                <Field label="Description (for screen readers)" value={m.alt ?? ""} onChange={(v) => upd(i, { models: (p.models ?? []).map((x, j) => (j === mi ? { ...x, alt: v } : x)) })} />
+              </div>
+            ))}
+            <AddButton label="Add 3D model" onClick={() => upd(i, { models: [...(p.models ?? []), { src: "", label: "" }] })} />
 
             <p className="text-xs uppercase tracking-wide text-neutral-500 mt-4 mb-2">Status checklist</p>
             {p.statusItems.map((item, ii) => (

@@ -105,7 +105,7 @@ export const SEED_PROJECTS: Project[] = [
       },
       {
         heading: "Community ownership",
-        image: "/photos/site/rwanda-sienna-kids.jpg",
+        image: "/photos/site/rwanda-school-water-tanks.jpg",
         body: "The project is built to outlast our travel team. We're establishing an elected local water committee with access to a maintenance fund to oversee upkeep and chlorination supplies, employing local labor, and sourcing as much material as possible from the nearby market in Kabaya. Educational seminars will deepen the community's understanding of the system so it can be maintained locally for years.",
       },
     ],
@@ -151,7 +151,7 @@ export const SEED_PROJECTS: Project[] = [
     navLabel: "Domestic Project",
     summary:
       "Stormwater-mitigation design for the Montessori School of Catskill, New York.",
-    heroImage: "/photos/projects.jpg",
+    heroImage: "/photos/site/catskills-domestic-team-field.jpg",
     sections: [
       {
         heading: "Background",
@@ -170,7 +170,13 @@ export const SEED_PROJECTS: Project[] = [
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Placeholder text, to be filled in by the domestic team.",
       },
     ],
-    technicalDrawings: ["/photos/site/catskills-cad.jpg"],
+    // Mock structure matching the International page: photo slot beside each
+    // section + a carousel, both labeled until real photos are added in /admin.
+    photoSlots: true,
+    gallery: [
+      "/photos/site/catskills-cad.jpg",
+      "/photos/site/catskills-domestic-team-hero.jpg",
+    ],
     statusItems: [],
     stats: [],
     published: true,
@@ -178,28 +184,33 @@ export const SEED_PROJECTS: Project[] = [
   },
   {
     slug: "local-volunteering",
-    title: "Local Volunteering",
+    title: "Greater Burlington Area",
     eyebrow: "Local Volunteering",
-    location: "Vermont",
-    status: "Ongoing",
+    location: "",
+    status: "Greater Burlington area",
     navLabel: "Local Volunteering",
     summary:
       "Hands-on service with community organizations across Vermont.",
-    heroImage: "/photos/join.jpg",
+    heroImage: "/photos/site/local-volunteering-hero.jpg",
+    heroPosition: "center 38%",
     sections: [
       {
         heading: "Overview",
         body: "Our local project team partners with community organizations across Vermont. We work to support neighbors in need and people who have been disproportionately affected by flooding and other natural disasters in Vermont.",
+        image: "/photos/site/local-volunteering-1.jpg",
       },
       {
         heading: "Fall 2025 projects",
         body: "On September 27th, members split across two sites with Rebuilding Together Greater Burlington. In South Burlington, volunteers built a new fence and repainted the facade of a family home that had fallen into disrepair. In Hinesburg, the group cleared and cleaned a property's yard so skilled volunteers could replace the deck and repair the kitchen. Working alongside experienced organizers, the team got to see the direct impact of their work in the community.",
+        image: "/photos/site/local-volunteering-3.jpg",
       },
       {
         heading: "Spring 2026",
         body: "Started a project in Middlebury, Vermont. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Placeholder, more detail coming.",
+        image: "/photos/site/local-volunteering-4.jpg",
       },
     ],
+    photoSlots: true,
     statusItems: [],
     stats: [],
     published: true,
@@ -215,6 +226,7 @@ export const SEED_PROJECTS: Project[] = [
     summary:
       "A record of the chapter's completed work and the communities we've partnered with over the years.",
     heroImage: "/photos/projects/past-projects.jpg",
+    layout: "timeline",
     sections: [
       {
         heading: "Our history",

@@ -24,6 +24,7 @@ type Slot = {
   aspect: number;
   key?: string; // section key
   slug?: string; // project slug
+  fallback?: string; // default image when the slot has no /photos/<key>.jpg
 };
 
 const SECTION_SLOTS: Slot[] = [
@@ -32,6 +33,8 @@ const SECTION_SLOTS: Slot[] = [
   { id: "giving", label: "Home — Giving band", kind: "section", key: "giving", aspect: 16 / 9 },
   { id: "join", label: "Home — Join band", kind: "section", key: "join", aspect: 16 / 9 },
   { id: "about", label: "About header", kind: "section", key: "about", aspect: 16 / 9 },
+  { id: "mission", label: "Mission statement header", kind: "section", key: "mission", aspect: 16 / 9, fallback: "/photos/site/rwanda-science-mountain.jpg" },
+  { id: "team", label: "Officer board team photo", kind: "section", key: "team", aspect: 3 / 2, fallback: "/photos/site/team-group.jpg" },
   { id: "sponsors", label: "Sponsors header", kind: "section", key: "sponsors", aspect: 16 / 9 },
   { id: "contact", label: "Contact header", kind: "section", key: "contact", aspect: 16 / 9 },
 ];
@@ -87,7 +90,7 @@ export default function PhotoStudio({
     (slot: Slot): string => {
       if (slot.kind === "hero") return settings.heroImages?.[0] || "/photos/hero.jpg";
       if (slot.kind === "section")
-        return settings.sectionImages?.[slot.key!] || `/photos/${slot.key}.jpg`;
+        return settings.sectionImages?.[slot.key!] || slot.fallback || `/photos/${slot.key}.jpg`;
       const p = projects.find((x) => x.slug === slot.slug);
       return p?.heroImage || `/photos/projects/${slot.slug}.jpg`;
     },

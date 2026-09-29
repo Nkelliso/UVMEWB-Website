@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import Placeholder from "@/components/Placeholder";
-import { getOfficers } from "@/lib/store";
+import { getOfficers, getSettings } from "@/lib/store";
 import type { Officer } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -37,10 +37,15 @@ function OfficerCard({ officer }: { officer: Officer }) {
 }
 
 export default async function OfficerBoardPage() {
-  const board = await getOfficers();
+  const [board, settings] = await Promise.all([getOfficers(), getSettings()]);
+  const teamPhoto = settings.sectionImages?.team || "/photos/site/team-group.jpg";
 
   return (
-    <PageShell eyebrow="About" title="Meet our team" narrow={false}>
+    <PageShell title="Meet our team" narrow={false}>
+      <figure className="ewb-team-photo">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={teamPhoto} alt="EWB UVM members together at a UVM event" />
+      </figure>
       <p className="ewb-note">Current officers as of {board.asOf}.</p>
 
       <section className="ewb-officer-section">

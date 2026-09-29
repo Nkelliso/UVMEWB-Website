@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import PageRenderer from "@/components/PageRenderer";
-import { getPageData } from "@/lib/store";
+import { getPageData, getSettings } from "@/lib/store";
 
 export const metadata: Metadata = {
   title: "Mission Statement · EWB UVM",
@@ -9,9 +9,16 @@ export const metadata: Metadata = {
 };
 
 export default async function MissionPage() {
-  const data = await getPageData("mission-statement");
+  const [data, settings] = await Promise.all([
+    getPageData("mission-statement"),
+    getSettings(),
+  ]);
   return (
-    <PageShell eyebrow="About" title="Mission statement" narrow={false}>
+    <PageShell
+      title="Mission statement"
+      narrow={false}
+      image={settings.sectionImages?.mission || "/photos/site/rwanda-science-mountain.jpg"}
+    >
       <PageRenderer data={data} />
     </PageShell>
   );

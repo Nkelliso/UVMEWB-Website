@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import ContactForm from "@/components/ContactForm";
+import EmailSignupForm from "@/components/EmailSignupForm";
 import { getSettings } from "@/lib/store";
 
 export const metadata: Metadata = {
@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 // Outreach liaisons shown at the foot of the page. Email/photo fall back
 // gracefully (chapter email + initials tile) until real ones are added.
+// TODO: add Leah's and Luke's real email addresses below.
 const LIAISONS = [
   { name: "Leah Dennis", role: "Outreach Coordinator", email: "", photo: "" },
   { name: "Luke O’Brien", role: "Outreach Coordinator", email: "", photo: "" },
@@ -37,7 +38,6 @@ export default async function ContactPage() {
         />
         <div className="ewb-shell-scrim" />
         <div className="ewb-wrap ctc-hero-inner">
-          <p className="ewb-eyebrow">Get involved</p>
           <h1>Join the chapter</h1>
           <p className="ctc-hero-sub">
             Engineers Without Borders welcomes students of every major. No
@@ -53,17 +53,20 @@ export default async function ContactPage() {
             <div className="ctc-involve-text">
               <h2>All majors welcome</h2>
               <p>
-                You don’t have to be an engineer to make an impact. Our members
-                come from across the university to design real infrastructure,
-                fundraise, run outreach, and travel with our project teams.
-                Curious? Sit in on a meeting. Everyone’s welcome.
+                You don’t have to be an engineer to make an impact! Our members
+                come from majors all across the university. Together we design
+                real infrastructure, fundraise, work with local businesses, and
+                create real change in people’s lives. Come meet us at a
+                meeting!
               </p>
             </div>
             <aside className="ctc-meeting-card">
-              <p className="ctc-meeting-label">Meetings</p>
+              <h3 className="ctc-meeting-label">Meetings</h3>
               <p className="ctc-meeting-body">
-                General body meetings run weekly during the semester. For the
-                current time and place, follow us on{" "}
+                Each of our project teams meets every week during the semester,
+                so there’s always a meeting to drop into.{" "}
+                <a href="#email-list">Join our email list</a> or
+                find us on{" "}
                 {settings.instagram ? (
                   <a href={settings.instagram} target="_blank" rel="noreferrer">
                     Instagram
@@ -71,27 +74,28 @@ export default async function ContactPage() {
                 ) : (
                   "Instagram"
                 )}{" "}
-                or reach out below.
+                for times and places.
               </p>
             </aside>
           </section>
 
-          {/* Contact form + email */}
-          <section className="ctc-reach">
-            <h2>Contact us</h2>
+          {/* Email list signup + chapter email */}
+          <section className="ctc-reach" id="email-list">
+            <h2>Sign up for our email list</h2>
             <p className="ewb-lede ctc-reach-lede">
-              Get in touch with the form below, or email{" "}
+              Get meeting times, project news, and ways to get involved. Have a
+              question? Email{" "}
               <a href={`mailto:${settings.contactEmail}`}>
                 {settings.contactEmail}
               </a>
               .
             </p>
-            <ContactForm />
+            <EmailSignupForm />
           </section>
 
           {/* Outreach liaisons */}
           <section className="ctc-people">
-            <p className="ewb-sponsor-tier-name">Contact emails</p>
+            <h2>Contact emails</h2>
             <div className="ctc-people-grid">
               {LIAISONS.map((p) => {
                 const email = p.email || settings.contactEmail;

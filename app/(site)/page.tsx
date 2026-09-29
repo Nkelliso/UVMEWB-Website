@@ -10,6 +10,12 @@ const BASE = "";
 // auto-applies the .is-parallax bleed override.
 const STRENGTH = 210;
 
+// People cut out of a specific hero photo, so the headline can sit behind their
+// heads. Keyed by photo: a different hero simply renders without the effect.
+const HERO_CUTOUTS: Record<string, string> = {
+  "/photos/site/home-hero-team.jpg": "/photos/site/home-hero-team-cutout.webp",
+};
+
 export default async function ImmersiveHome() {
   const settings = await getSettings();
 
@@ -34,10 +40,15 @@ export default async function ImmersiveHome() {
         warm
         parallaxStrength={STRENGTH}
         image={heroImage}
+        foreground={HERO_CUTOUTS[heroImage]}
         title={settings.heroHeading}
-        titleSuffix="at UVM"
+        titleSuffix={
+          <>
+            <span className="imm-uvm-gold">at</span>{" "}
+            <span className="imm-uvm-green">UVM</span>
+          </>
+        }
         sub={settings.heroSubline}
-        showScroll
         actions={[
           { label: "Learn more", href: `${BASE}/about`, variant: "gold" },
         ]}

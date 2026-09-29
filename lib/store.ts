@@ -101,6 +101,36 @@ export const savePageData = (slug: string, data: PuckData) =>
   setContent(`page:${slug}`, data);
 
 /* ── Contact submissions ──────────────────────────────────── */
+
+/** Newest first. Admin-only: reads with the service-role client because RLS
+ *  gives the anon key insert-only access to this table. */
+export async function listContactSubmissions(): Promise<ContactSubmission[]> {
+  if (isPartiallyConfigured()) throw new Error(`[store] ${PARTIAL_CONFIG}`);
+  const client = writeClient();
+  if (client) {
+    const { data, error } = await client
+      .from("contact_submissions")
+      .select("id, name, email, message, created_at")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(`[store] contact read: ${error.message}`);
+    return (data ?? []).map((r) => ({
+      id: r.id,
+      name: r.name,
+      email: r.email,
+      message: r.message,
+      createdAt: r.created_at,
+    }));
+  }
+  try {
+    const all: ContactSubmission[] = JSON.parse(
+      fs.readFileSync(filePath("contact_submissions"), "utf-8")
+    );
+    return all.reverse();
+  } catch {
+    return [];
+  }
+}
+
 export async function addContactSubmission(
   entry: ContactSubmission
 ): Promise<void> {

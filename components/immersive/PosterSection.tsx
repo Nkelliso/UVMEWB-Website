@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 
 export interface PosterAction {
@@ -21,13 +21,13 @@ export default function PosterSection({
   variant = "poster",
   align = "center",
   image,
-  eyebrow,
   title,
   sub,
   titleSuffix,
   actions = [],
   strip,
   showScroll = false,
+  foreground,
   short = false,
   warm = false,
   scrimToFooter = false,
@@ -40,10 +40,14 @@ export default function PosterSection({
   title: string;
   sub?: string;
   /** Small trailing text inside the heading, e.g. "at UVM". */
-  titleSuffix?: string;
+  titleSuffix?: ReactNode;
   actions?: PosterAction[];
   strip?: string[];
   showScroll?: boolean;
+  /** Cut-out of the people in `image` (transparent PNG/WebP, same pixel size).
+   *  Stacked above the title so the headline sits behind their heads but in
+   *  front of the sky. Only pass it for the exact photo it was cut from. */
+  foreground?: string;
   short?: boolean;
   /** Warm the background photo (sepia + saturation + hue shift). Used on the
    *  home page's photographic bands. */
@@ -60,6 +64,9 @@ export default function PosterSection({
   const strong = parallaxStrength > 120;
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
+  const fgRef = useRef<HTMLDivElement>(null);
+  // Depth mode only: the title rides the photo's parallax so it stays locked to it.
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const bg = bgRef.current;
@@ -85,7 +92,11 @@ export default function PosterSection({
         window.innerHeight;
       // translate3d keeps the move on the GPU compositor so the reveal stays
       // smooth (no per-frame repaint of the large photo) → the Cal-Poly feel.
-      bg.style.transform = `translate3d(0, ${progress * parallaxStrength}px, 0)`;
+      const t = `translate3d(0, ${progress * parallaxStrength}px, 0)`;
+      bg.style.transform = t;
+      // The cut-out must move in lockstep or it slides off the people.
+      if (fgRef.current) fgRef.current.style.transform = t;
+      if (fgRef.current && titleRef.current) titleRef.current.style.transform = t;
     };
     const onScroll = () => {
       if (!raf) raf = window.requestAnimationFrame(update);
@@ -97,6 +108,7 @@ export default function PosterSection({
       // Promote to a compositor layer only while parallax actually runs, so the
       // large photo isn't permanently layer-promoted on phones / reduced-motion.
       bg.style.willChange = "transform";
+      if (fgRef.current) fgRef.current.style.willChange = "transform";
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onScroll);
       update();
@@ -112,6 +124,11 @@ export default function PosterSection({
       }
       bg.style.transform = "";
       bg.style.willChange = "";
+      if (fgRef.current) {
+        fgRef.current.style.transform = "";
+        fgRef.current.style.willChange = "";
+      }
+      if (titleRef.current) titleRef.current.style.transform = "";
     };
 
     const evaluate = () => {
@@ -145,17 +162,27 @@ export default function PosterSection({
         short ? "is-short" : ""
       } ${strong ? "is-parallax" : ""} ${warm ? "is-warm" : ""} ${
         scrimToFooter ? "is-tofooter" : ""
-      }`}
+      } ${foreground ? "has-depth" : ""}`}
     >
       <div
         ref={bgRef}
         className="imm-poster-bg"
         style={image ? { backgroundImage: `url(${image})` } : undefined}
       />
+      {foreground && (
+        <div
+          ref={fgRef}
+          className="imm-poster-fg"
+          style={{ "--fg": `url(${foreground})` } as CSSProperties}
+          aria-hidden
+        >
+          <div className="imm-poster-fg-img" />
+          <div className="imm-poster-fg-scrim" />
+        </div>
+      )}
       <div className="imm-poster-scrim" />
       <div className="imm-poster-content">
-        {eyebrow && <p className="imm-poster-eyebrow">{eyebrow}</p>}
-        <Heading className="imm-poster-title">
+        <Heading ref={titleRef} className="imm-poster-title">
           {title}
           {titleSuffix && (
             <span className="imm-poster-title-suffix">{titleSuffix}</span>

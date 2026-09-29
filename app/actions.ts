@@ -83,3 +83,42 @@ export async function submitContact(
     return { ok: false, error: "Something went wrong — please email us directly." };
   }
 }
+
+// Email-list signups reuse the contact_submissions table (no migration needed),
+// tagged via the message column so they're easy to filter and export.
+const SIGNUP_TAG = "Email list signup";
+
+export async function submitSignup(
+  _prev: ContactState,
+  formData: FormData
+): Promise<ContactState> {
+  if ((formData.get("company") as string)?.trim()) {
+    return { ok: true };
+  }
+
+  const h = await headers();
+  const ip =
+    h.get("x-forwarded-for")?.split(",")[0].trim() ||
+    h.get("x-real-ip") ||
+    "unknown";
+  if (rateLimited(ip)) {
+    return { ok: false, error: "Too many signups — please try again later or email us directly." };
+  }
+
+  const name = (formData.get("name") as string)?.trim();
+  const email = (formData.get("email") as string)?.trim();
+
+  if (!name || !email) {
+    return { ok: false, error: "Please add your name and email." };
+  }
+  if (!EMAIL_RE.test(email)) {
+    return { ok: false, error: "Please enter a valid email address." };
+  }
+  try {
+    await addContactSubmission({ name, email, message: SIGNUP_TAG });
+    return { ok: true };
+  } catch (e) {
+    console.error(e);
+    return { ok: false, error: "Something went wrong — please email us directly." };
+  }
+}

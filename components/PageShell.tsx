@@ -15,7 +15,7 @@ export default function PageShell({
   image,
   tall = false,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   children: ReactNode;
   narrow?: boolean;
@@ -37,7 +37,7 @@ export default function PageShell({
           </>
         )}
         <div className="ewb-wrap">
-          <p className="ewb-eyebrow">{eyebrow}</p>
+          {eyebrow && <p className="ewb-eyebrow">{eyebrow}</p>}
           <h1>{title}</h1>
         </div>
       </div>

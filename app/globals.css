@@ -27,6 +27,8 @@
   /* accent — warm gold */
   --gold: oklch(80% 0.13 80);
   --gold-deep: oklch(70% 0.14 72);
+  --gold-ink: oklch(50% 0.11 70); /* gold for small text on paper — 5:1+ */
+  --gold-on: oklch(28% 0.05 70); /* text on gold buttons */
 
   /* rules */
   --rule: oklch(88% 0.01 95);
@@ -57,6 +59,16 @@
   --ease-out: cubic-bezier(0.2, 0.6, 0.2, 1);
   --dur: 0.35s;
   --radius: 0.5rem;
+  --shadow-btn: 0 1px 2px oklch(23% 0.03 158 / 0.18);
+  --shadow-btn-hover: 0 4px 12px oklch(23% 0.03 158 / 0.24);
+  --shadow-btn-gold: 0 1px 2px oklch(40% 0.06 70 / 0.22);
+  --shadow-btn-gold-hover: 0 4px 12px oklch(40% 0.06 70 / 0.3);
+  --shell-scrim: linear-gradient(
+    180deg,
+    oklch(0% 0 0 / 0.35) 0%,
+    oklch(0% 0 0 / 0.15) 40%,
+    oklch(0% 0 0 / 0.78) 100%
+  );
   --gradient-overlay: linear-gradient(
     180deg,
     oklch(20% 0.03 158 / 0.62) 0%,
@@ -278,30 +290,30 @@ body {
 .ewb-btn-primary {
   background: var(--green);
   color: var(--chalk);
-  box-shadow: 0 1px 2px oklch(23% 0.03 158 / 0.18);
+  box-shadow: var(--shadow-btn);
 }
 .ewb-btn-primary:hover {
   background: var(--green-deep);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px oklch(23% 0.03 158 / 0.24);
+  box-shadow: var(--shadow-btn-hover);
 }
 .ewb-btn-primary:active {
   transform: translateY(0);
-  box-shadow: 0 1px 2px oklch(23% 0.03 158 / 0.18);
+  box-shadow: var(--shadow-btn);
 }
 .ewb-btn-gold {
   background: var(--gold);
-  color: oklch(28% 0.05 70);
-  box-shadow: 0 1px 2px oklch(40% 0.06 70 / 0.22);
+  color: var(--gold-on);
+  box-shadow: var(--shadow-btn-gold);
 }
 .ewb-btn-gold:hover {
   background: var(--gold-deep);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px oklch(40% 0.06 70 / 0.3);
+  box-shadow: var(--shadow-btn-gold-hover);
 }
 .ewb-btn-gold:active {
   transform: translateY(0);
-  box-shadow: 0 1px 2px oklch(40% 0.06 70 / 0.22);
+  box-shadow: var(--shadow-btn-gold);
 }
 .ewb-btn-ghost {
   border: 1px solid currentColor;
@@ -512,20 +524,37 @@ body {
 .ewb-officer-section {
   margin-top: var(--space-xl);
 }
+/* Big group photo at the top of the officer board ("Meet our team"). */
+.ewb-team-photo {
+  margin: 0 0 var(--space-lg);
+}
+.ewb-team-photo img {
+  display: block;
+  width: 100%;
+  max-height: 44rem;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
 .ewb-officer-section h2 {
   text-align: center;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.4rem, 3vw, 1.9rem);
-  letter-spacing: -0.015em;
+  font-family: var(--font-heading-serif), Georgia, serif;
+  font-weight: 650;
+  font-variation-settings: "opsz" 144;
+  font-size: clamp(2rem, 4.5vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
 }
-.ewb-officer-group-heading {
+/* Project team titles (International / Domestic / Local): same serif, a size
+   down, black like the section headings. Scoped under .ewb-shell-body so it
+   outranks the grey `.ewb-shell-body p` rule. */
+.ewb-shell-body .ewb-officer-group-heading {
   text-align: center;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
+  font-family: var(--font-heading-serif), Georgia, serif;
+  font-weight: 600;
+  font-variation-settings: "opsz" 72;
+  font-size: clamp(1.3rem, 2.6vw, 1.5rem);
+  line-height: 1.15;
+  color: inherit;
   margin-top: var(--space-lg);
 }
 .ewb-officer-grid {
@@ -569,7 +598,7 @@ body {
 
 .ewb-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
   gap: var(--space-lg);
   margin-top: var(--space-lg);
 }
@@ -631,7 +660,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold-deep);
+  color: var(--gold-ink);
   margin-top: var(--space-lg);
 }
 .ewb-sponsor-grid {
@@ -747,11 +776,9 @@ body {
   gap: 0.4rem;
 }
 .ewb-field label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 .ewb-input,
 .ewb-textarea {
@@ -766,8 +793,12 @@ body {
 }
 .ewb-input:focus,
 .ewb-textarea:focus {
-  outline: none;
   border-color: var(--green);
+}
+.ewb-input:focus-visible,
+.ewb-textarea:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 .ewb-note {
   font-size: 0.9rem;
@@ -992,10 +1023,7 @@ body {
   position: absolute;
   inset: 0;
   /* immersive supplies --poster-scrim; other editions fall back to this. */
-  background: var(
-    --poster-scrim,
-    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.15) 40%, rgba(0, 0, 0, 0.78) 100%)
-  );
+  background: var(--poster-scrim, var(--shell-scrim));
   z-index: 0;
 }
 .theme-immersive .ewb-shell-head .ewb-wrap {
@@ -1259,8 +1287,8 @@ body {
   z-index: -1;
   background: linear-gradient(
     to top,
-    oklch(20% 0.04 158 / 0.88),
-    oklch(20% 0.04 158 / 0.2) 55%,
+    oklch(20% 0 0 / 0.88),
+    oklch(20% 0 0 / 0.2) 55%,
     transparent
   );
 }
@@ -1282,12 +1310,11 @@ body {
 .proj-hero-title {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(2.6rem, 8vw, 6rem);
+  font-size: clamp(1.6rem, 8vw, 6rem);
   line-height: 0.98;
   letter-spacing: -0.01em;
   margin: 0;
-  text-wrap: balance;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 .proj-hero-meta {
   font-family: var(--font-display);
@@ -1383,6 +1410,57 @@ body {
   --poster-color: transparent;
   display: block;
 }
+.proj-model {
+  position: relative;
+}
+/* Corner full-screen toggle. The embed keeps its size until this is pressed. */
+.proj-model-fs {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink, #1a1a1a);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.proj-model-fs:hover {
+  background: var(--rule);
+}
+.proj-model-fs:focus-visible {
+  outline: 2px solid var(--ink, #1a1a1a);
+  outline-offset: 2px;
+}
+.proj-model-fs svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* Native fullscreen and the iPhone overlay fallback both fill the viewport. */
+.proj-model:fullscreen,
+.proj-model.is-overlay {
+  aspect-ratio: auto;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+.proj-model.is-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
 .proj-model-loading {
   display: flex;
   align-items: center;
@@ -1426,6 +1504,147 @@ body {
   }
 }
 
+/* Photo carousel (project `gallery`). */
+.proj-gallery {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 5vw, 3rem);
+}
+.proj-carousel {
+  margin-top: 1.5rem;
+}
+.proj-carousel-viewport {
+  overflow: hidden;
+  border-radius: 2px;
+  aspect-ratio: 16 / 9;
+  background: var(--paper-2);
+}
+.proj-carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease;
+}
+.proj-carousel-slide {
+  flex: 0 0 100%;
+  height: 100%;
+}
+.proj-carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.proj-carousel-slide .ewb-placeholder {
+  height: 100%;
+  border-radius: 2px;
+}
+.proj-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.proj-carousel-btn {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--rule-dark);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.proj-carousel-btn:hover {
+  background: var(--paper-2);
+}
+.proj-carousel-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+.proj-carousel-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  padding: 0;
+  border: 1px solid var(--green-deep);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.proj-carousel-dot.is-active {
+  background: var(--green-deep);
+}
+.proj-carousel-btn:focus-visible,
+.proj-carousel-dot:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-carousel-track {
+    transition: none;
+  }
+}
+
+/* Timeline layout (project `layout: "timeline"`, e.g. Past Projects). */
+.proj-timeline {
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3rem);
+}
+.proj-timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 2rem;
+  border-left: 2px solid var(--rule-dark);
+}
+.proj-timeline-item {
+  position: relative;
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+.proj-timeline-item:last-child {
+  padding-bottom: 0;
+}
+.proj-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-2rem - 7px);
+  top: 0.35rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px var(--paper);
+}
+.proj-timeline-date {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: var(--imm-track);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0 0 0.4rem;
+}
+.proj-timeline-heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  line-height: 1.05;
+  color: var(--green-deep);
+  margin: 0 0 0.8rem;
+  text-wrap: balance;
+}
+.proj-timeline-img {
+  width: 100%;
+  max-height: 26rem;
+  object-fit: cover;
+  border-radius: 2px;
+  margin-top: 1.25rem;
+  display: block;
+}
+
 .proj-cta {
   max-width: 1180px;
   margin: 0 auto;
@@ -1461,6 +1680,84 @@ body {
 }
 .imm-poster.is-short {
   min-height: 78svh;
+}
+/* Depth hero: photo → scrim → title → cut-out people → subline/buttons. The
+   cut-out carries its own copy of the scrim, masked to the people, so they
+   shade exactly like the photo under them (no seam) while the title stays
+   bright. The layer shares the photo's bleed box and parallax transform. */
+.imm-poster.has-depth .imm-poster-bg {
+  z-index: -4;
+}
+.imm-poster.has-depth .imm-poster-scrim {
+  z-index: -3;
+}
+.imm-poster-fg {
+  position: absolute;
+  inset: -12% 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.imm-poster.is-parallax .imm-poster-fg {
+  inset: -42% 0;
+}
+.imm-poster-fg-img,
+.imm-poster-fg-scrim {
+  position: absolute;
+  inset: 0;
+}
+.imm-poster-fg-img {
+  background: var(--fg) center / cover no-repeat;
+}
+.imm-poster.is-warm .imm-poster-fg-img {
+  filter: saturate(1.18) sepia(0.17) hue-rotate(-7deg);
+}
+/* --poster-scrim's stops (0 / 42 / 100% of the section) re-expressed in this
+   taller bleed box: (bleed + stop) / (1 + 2 * bleed). */
+.imm-poster-fg-scrim {
+  -webkit-mask: var(--fg) center / cover no-repeat;
+  mask: var(--fg) center / cover no-repeat;
+  background: linear-gradient(
+    180deg,
+    oklch(18% 0.03 158 / 0.36) 9.68%,
+    oklch(16% 0.03 158 / 0.12) 43.55%,
+    oklch(16% 0.03 158 / 0.38) 90.32%
+  );
+}
+.imm-poster.is-parallax .imm-poster-fg-scrim {
+  background: linear-gradient(
+    180deg,
+    oklch(18% 0.03 158 / 0.36) 22.83%,
+    oklch(16% 0.03 158 / 0.12) 45.65%,
+    oklch(16% 0.03 158 / 0.38) 77.17%
+  );
+}
+/* Lift the headline out of the stack into the sky, just low enough for the
+   tallest head to cross its lower edge. The photo scales with viewport height
+   (cover on the parallax bleed box), so the heads sit at a fixed fraction of
+   the hero's height and a % top tracks them across desktop sizes. */
+.imm-poster.has-depth .imm-poster-title {
+  /* PosterSection gives the title the photo's parallax transform, so it stays
+     locked to the photo and the same head always covers the same letters. */
+  position: absolute;
+  z-index: -2;
+  /* Tallest head's top sits at 26.8% of the hero (photo scales with viewport
+     height); the title scales with width (min(6vw, 7rem)). Its baseline is
+     0.972em below the box top and caps are 0.833em tall, so this puts that head
+     over the bottom quarter of the letters: 26.8% - (0.972 - 0.25 * 0.833)em. */
+  top: calc(26.8% - 0.764 * min(6vw, 7rem));
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+}
+@media (max-width: 760px) {
+  /* The headline wraps to several lines on phones; keep it in front. */
+  .imm-poster.has-depth .imm-poster-fg {
+    display: none;
+  }
+  .imm-poster.has-depth .imm-poster-title {
+    position: static;
+  }
 }
 /* Warm-tone treatment for home-page photos (sepia + saturation + hue shift, no
    brightness lift). Applied to the background layer only, so overlaid text stays
@@ -1576,6 +1873,14 @@ body {
 }
 /* Small trailing qualifier inside the hero heading ("… at UVM"). Sized in `em`
    so it tracks the title's clamp() instead of needing its own breakpoints. */
+/* Hero suffix in UVM's official colors (brand guide): "at" in Gold #FFD100,
+   "UVM" in Catamount Green #154734. */
+.imm-uvm-gold {
+  color: #ffd100;
+}
+.imm-uvm-green {
+  color: #154734;
+}
 .imm-poster-title-suffix {
   display: inline-block;
   margin-left: 0.45em;
@@ -1978,7 +2283,8 @@ body {
 }
 
 .ctc-involve-text h2,
-.ctc-reach h2 {
+.ctc-reach h2,
+.ctc-people h2 {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(1.5rem, 3vw, 2rem);
@@ -1986,7 +2292,8 @@ body {
   color: var(--ink);
 }
 .theme-immersive .ctc-involve-text h2,
-.theme-immersive .ctc-reach h2 {
+.theme-immersive .ctc-reach h2,
+.theme-immersive .ctc-people h2 {
   text-transform: uppercase;
   letter-spacing: var(--imm-track);
   font-weight: 500;
@@ -2011,11 +2318,10 @@ body {
   padding: clamp(1.25rem, 3vw, 1.75rem);
 }
 .ctc-meeting-label {
-  font-size: 0.78rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold-deep);
+  color: var(--ink);
 }
 .ctc-meeting-body {
   margin-top: 0.6rem;
@@ -2030,6 +2336,7 @@ body {
 
 .ctc-reach {
   margin-top: clamp(3rem, 8vw, 5.5rem);
+  scroll-margin-top: 6rem; /* #email-list jump clears the fixed header */
 }
 .ctc-reach-lede {
   margin-bottom: var(--space-lg);
@@ -2057,7 +2364,7 @@ body {
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: var(--radius);
-  background: var(--poster-field, oklch(30% 0.06 158));
+  background: var(--poster-field, var(--field));
 }
 .ctc-person-photo--initials {
   display: flex;

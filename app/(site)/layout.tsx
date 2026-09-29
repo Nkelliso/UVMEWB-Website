@@ -44,6 +44,17 @@ const heroFace = localFont({
   ],
 });
 
+/** Officer board headings: Fraunces, a soft serif chosen 2026-09-29 from a
+ *  side-by-side against Oswald and Bricolage Grotesque. Latin-subset variable
+ *  file (opsz 9-144, wght 300-800) from Google Fonts, self-hosted like the rest. */
+const headingSerif = localFont({
+  variable: "--font-heading-serif",
+  display: "swap",
+  src: [
+    { path: "../fonts/fraunces-variable.woff2", weight: "300 800", style: "normal" },
+  ],
+});
+
 export const metadata: Metadata = {
   title: "Engineers Without Borders · UVM Chapter",
   description:
@@ -62,7 +73,7 @@ export default async function SiteLayout({
 
   return (
     <div
-      className={`theme-immersive ${immersiveDisplay.variable} ${buttonFace.variable} ${heroFace.variable}`}
+      className={`theme-immersive ${immersiveDisplay.variable} ${buttonFace.variable} ${heroFace.variable} ${headingSerif.variable}`}
     >
       <ImmersiveHeader
         nav={nav}

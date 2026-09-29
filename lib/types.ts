@@ -30,6 +30,8 @@ export interface ProjectSection {
   body: string;
   /** Optional photo shown beside this section in the alternating layout. */
   image?: string;
+  /** Date or term label ("Spring 2024") shown on the timeline layout. */
+  date?: string;
 }
 
 export interface Project {
@@ -40,6 +42,9 @@ export interface Project {
   status: string;
   summary: string;
   heroImage?: string;
+  /** CSS background-position for the hero image (e.g. "center 35%"). Use when
+   *  the default center crop cuts off the subject in a tall/portrait photo. */
+  heroPosition?: string;
   sections: ProjectSection[];
   statusItems: string[];
   stats: ProjectStat[];
@@ -51,6 +56,15 @@ export interface Project {
   technicalDrawings?: string[];
   /** Optional interactive 3D models (glTF/GLB) shown in their own section. */
   models?: ProjectModel[];
+  /** Photos for the rotating carousel. Leave undefined to hide the section;
+   *  an empty array shows labeled photo slots until photos are added. */
+  gallery?: string[];
+  /** "standard" = alternating photo/text sections (the International page).
+   *  "timeline" = sections as dated entries down a vertical line (Past Projects). */
+  layout?: "standard" | "timeline";
+  /** Show a labeled "photo coming" slot beside sections that have no image, so
+   *  the page keeps the International page's alternating structure. */
+  photoSlots?: boolean;
 }
 
 /** One interactive 3D model shown in the project's "Explore in 3D" section. */

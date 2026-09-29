@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import Placeholder from "@/components/Placeholder";
@@ -10,13 +11,20 @@ export const metadata: Metadata = {
     "International, domestic, and local engineering projects run by the EWB UVM chapter.",
 };
 
+// Cards show photos ~390px wide, but uploads are often 2400px+. Letting the
+// browser shrink them ~6x on the fly aliases fine detail, so resize through
+// Next's optimizer instead. Only local and Supabase paths are allowlisted
+// (next.config.ts); any other pasted URL renders as-is rather than erroring.
+const canOptimize = (src: string) =>
+  src.startsWith("/") || /^https:\/\/[^/]+\.supabase\.co\//.test(src);
+
 export default async function ProjectsIndex() {
   const projects = (await getProjects())
     .filter((p) => p.published)
     .sort((a, b) => a.order - b.order);
 
   return (
-    <PageShell eyebrow="Our work" title="Projects, near and far" narrow={false} image="/photos/site/projects-header.jpg">
+    <PageShell title="Our work" narrow={false} image="/photos/site/projects-header.jpg">
       <p className="ewb-lede">
         From a clean-water pipeline in Rwanda to stormwater work in the
         Northeast and volunteering across Vermont, every project is designed
@@ -31,17 +39,24 @@ export default async function ProjectsIndex() {
             className="ewb-project-card"
           >
             {p.heroImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={p.heroImage}
-                alt={p.title}
-                style={{ width: "100%", height: "11rem", objectFit: "cover" }}
-              />
+              <div style={{ position: "relative", height: "11rem" }}>
+                <Image
+                  src={p.heroImage}
+                  alt={p.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
+                  unoptimized={!canOptimize(p.heroImage)}
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
             ) : (
               <Placeholder label="Project photo placeholder" height="11rem" />
             )}
             <div className="ewb-project-card-body">
-              <span className="ewb-tag">{p.status}</span>
+              {p.status &&
+                p.status.toLowerCase() !== p.title.toLowerCase() && (
+                  <span className="ewb-tag">{p.status}</span>
+                )}
               <h3>{p.title}</h3>
               <p>{p.summary}</p>
               <span className="ewb-project-more">

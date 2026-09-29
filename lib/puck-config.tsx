@@ -49,7 +49,6 @@ export const puckConfig: Config<Components> = {
         secondaryHref: "",
       },
       render: ({
-        eyebrow,
         heading,
         body,
         primaryLabel,
@@ -59,9 +58,9 @@ export const puckConfig: Config<Components> = {
       }) => (
         <section className="ewb-section is-bordered">
           <div className="ewb-split">
-            <div className="ewb-split-aside">
-              {eyebrow && <p className="ewb-eyebrow">{eyebrow}</p>}
-            </div>
+            {/* Gold eyebrow labels removed site-wide (2026-09-29); the field is
+                kept so saved page data still validates. */}
+            <div className="ewb-split-aside" />
             <div className="ewb-split-main">
               <h2 className="ewb-display">{heading}</h2>
               {body && <p>{body}</p>}
@@ -147,7 +146,6 @@ export const puckConfig: Config<Components> = {
       render: () => (
         <section className="ewb-section is-bordered">
           <div className="ewb-wrap" style={{ marginBottom: "1.5rem" }}>
-            <p className="ewb-eyebrow">Where we work</p>
             <h2 className="ewb-display" style={{ fontSize: "var(--text-h2)" }}>
               A chapter with global reach.
             </h2>

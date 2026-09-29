@@ -6,6 +6,7 @@ import { EDITABLE_PAGES } from "@/lib/pages";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
 
 const DATA_SECTIONS = [
+  { href: "/admin/inbox", title: "Inbox", note: "Contact messages & email-list signups" },
   { href: "/admin/photos", title: "Photos", note: "Upload, crop, color-adjust & place site photos" },
   { href: "/admin/officers", title: "Officer Board", note: "Executive board, advisor, project directors" },
   { href: "/admin/projects", title: "Projects", note: "International, domestic & local projects" },

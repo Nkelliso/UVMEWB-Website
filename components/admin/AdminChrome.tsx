@@ -122,18 +122,26 @@ export function ImageField({
   onChange: (v: string) => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const ref = useRef<HTMLInputElement>(null);
 
   async function upload(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     if (!f) return;
     setBusy(true);
+    setError(null);
     try {
       const form = new FormData();
       form.append("file", f);
       const res = await fetch("/api/upload", { method: "POST", body: form });
       const json = await res.json();
-      if (res.ok) onChange(json.url);
+      if (res.ok) {
+        onChange(json.url);
+      } else {
+        setError(json.error || "Upload failed");
+      }
+    } catch {
+      setError("Upload failed — check your connection and try again.");
     } finally {
       setBusy(false);
       e.target.value = "";
@@ -181,6 +189,7 @@ export function ImageField({
             )}
           </div>
           <input ref={ref} type="file" accept="image/*" hidden onChange={upload} />
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       </div>
     </label>
