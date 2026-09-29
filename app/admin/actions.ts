@@ -1,7 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { saveOfficers, saveProjects, saveSponsors, saveSettings } from "@/lib/store";
+import {
+  getSettings,
+  saveOfficers,
+  saveProjects,
+  saveSponsors,
+  saveSettings,
+  setContent,
+} from "@/lib/store";
+import { getVersion } from "@/lib/history";
 import { isAuthed } from "@/lib/auth";
 import type { OfficerBoard, Project, Sponsor, SiteSettings } from "@/lib/types";
 
@@ -31,9 +39,24 @@ export async function saveSponsorsAction(sponsors: Sponsor[]) {
   return { ok: true };
 }
 
-export async function saveSettingsAction(settings: SiteSettings) {
+/** Settings are edited from several admin screens (home text, contact, site
+ *  details, photos). Each sends only the fields it shows, merged onto the
+ *  latest saved settings, so one screen can't overwrite another's edits. */
+export async function saveSettingsAction(patch: Partial<SiteSettings>) {
   await requireAuth();
-  await saveSettings(settings);
+  const current = await getSettings();
+  await saveSettings({ ...current, ...patch });
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/** Put an older version back. The restore is itself saved as a new version,
+ *  so restoring the wrong one can be undone the same way. */
+export async function restoreVersionAction(id: string) {
+  await requireAuth();
+  const version = await getVersion(id);
+  if (!version) throw new Error("That version no longer exists.");
+  await setContent(version.key, version.value);
   revalidatePath("/", "layout");
   return { ok: true };
 }

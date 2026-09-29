@@ -10,7 +10,7 @@ export default function EmailSignupForm() {
 
   if (state.ok) {
     return (
-      <div className="ewb-note" style={{ fontSize: "1.05rem" }}>
+      <div className="ewb-note" role="status" style={{ fontSize: "1.05rem" }}>
         You&apos;re on the list. We&apos;ll email you meeting times and news.
       </div>
     );
@@ -45,7 +45,7 @@ export default function EmailSignupForm() {
         />
       </div>
       {state.error && (
-        <p className="ewb-note" style={{ color: "var(--gold-ink)" }}>
+        <p className="ewb-note" role="alert" style={{ color: "var(--gold-ink)" }}>
           {state.error}
         </p>
       )}

@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 import type { NavItem } from "@/lib/pages";
 
 /**
- * Immersive-route masthead (N6). Transparent white-on-photo over the home hero,
- * collapses to a solid deep-green bar on scroll and on interior pages. Uppercase
- * tracked links — the studied EWB Cal Poly type voice, dressed in UVM green+gold.
+ * Immersive-route masthead. Transparent white-on-photo over the home hero,
+ * collapses to a solid dark bar on scroll. Sentence-case bold links, a paper
+ * dropdown card, and a gold "Get involved" button
+ * (chosen 2026-09-29 from the nav-lab comparison, variation 1).
  * All hrefs arrive already prefixed with /immersive from the layout.
  *
  * Accessibility: submenus open on hover (mouse), on the caret toggle (touch +
@@ -16,6 +17,12 @@ import type { NavItem } from "@/lib/pages";
  * collapse breakpoint the nav becomes a full drawer behind a hamburger button,
  * and the dropdowns expand inline as accordions.
  */
+// The default /logo.png is a padded raster that blurs at header size; /logo.svg
+// is the same artwork traced to vectors and trimmed. Swapped here (not in data)
+// so saved settings pointing at /logo.png still get the sharp version. A logo
+// uploaded through /admin is used as-is.
+const crispLogo = (url: string) => (url === "/logo.png" ? "/logo.svg" : url);
+
 export default function ImmersiveHeader({
   nav,
   brand,
@@ -114,7 +121,7 @@ export default function ImmersiveHeader({
         <Link href={homeHref} className="imm-brand" aria-label={`${brand} home`}>
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt={brand} className="imm-brand-logo" />
+            <img src={crispLogo(logoUrl)} alt={brand} className="imm-brand-logo" />
           ) : (
             <>EWB<small>UVM</small></>
           )}
@@ -139,7 +146,8 @@ export default function ImmersiveHeader({
               <div
                 key={item.label}
                 className="imm-nav-item"
-                onMouseEnter={() => hasChildren && setOpenIdx(i)}
+                // Hovering an item without a menu closes whichever one is open.
+                onMouseEnter={() => setOpenIdx(hasChildren ? i : null)}
               >
                 <div className="imm-nav-row">
                   <Link
@@ -191,6 +199,17 @@ export default function ImmersiveHeader({
               </div>
             );
           })}
+          {/* Primary action, and the only way into /contact from the nav (the
+              Contact link was folded into it). */}
+          <Link
+            href="/contact"
+            className="imm-nav-cta"
+            onMouseEnter={() => setOpenIdx(null)}
+            aria-current={pathname.startsWith("/contact") ? "page" : undefined}
+            onClick={() => { setOpenIdx(null); setMenuOpen(false); }}
+          >
+            Get involved
+          </Link>
         </nav>
       </div>
     </header>

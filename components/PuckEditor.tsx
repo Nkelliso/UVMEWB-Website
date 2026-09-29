@@ -40,11 +40,19 @@ export default function PuckEditor({
       iframe={{ enabled: false }}
       headerPath={title}
       onPublish={async (updated) => {
-        await fetch("/api/save", {
+        // Only leave the editor once the save really worked; otherwise the
+        // officer would lose their edits without knowing.
+        const res = await fetch("/api/save", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ slug, data: updated }),
-        });
+        }).catch(() => null);
+        if (!res?.ok) {
+          window.alert(
+            "Couldn't publish. Check your internet connection and click Publish again. Your edits are still here."
+          );
+          return;
+        }
         router.push("/admin");
       }}
       overrides={{
@@ -54,7 +62,7 @@ export default function PuckEditor({
               href="/admin"
               className="flex items-center px-3 text-sm text-neutral-600 hover:text-neutral-900"
             >
-              ← Admin
+              ← All sections
             </Link>
             {children}
           </>

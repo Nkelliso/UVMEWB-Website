@@ -19,9 +19,22 @@ create table if not exists public.contact_submissions (
   created_at  timestamptz not null default now()
 );
 
+-- ── Version history (powers /admin/history "Restore") ───────────────────────
+-- Every admin save records a copy here; the app keeps the newest 25 per section.
+create table if not exists public.content_history (
+  id        bigint generated always as identity primary key,
+  key       text not null,
+  value     jsonb not null,
+  saved_at  timestamptz not null default now()
+);
+create index if not exists content_history_key_saved_at
+  on public.content_history (key, saved_at desc);
+
 -- ── Row Level Security ──────────────────────────────────────────────────────
 alter table public.content enable row level security;
 alter table public.contact_submissions enable row level security;
+-- History has no policies on purpose: only the server (service_role) reads it.
+alter table public.content_history enable row level security;
 
 -- Public site reads content with the anon key.
 drop policy if exists "content public read" on public.content;

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import AdminTopBar from "@/components/admin/AdminTopBar";
 import { isAuthed } from "@/lib/auth";
 import { listContactSubmissions } from "@/lib/store";
 
@@ -27,30 +28,26 @@ export default async function AdminInboxPage({
   // Full token check, not cookie presence: this page shows people's emails.
   if (!(await isAuthed())) redirect("/login");
 
-  const tab = (await searchParams).tab === "signups" ? "signups" : "messages";
+  const tab = (await searchParams).tab === "messages" ? "messages" : "signups";
   const all = await listContactSubmissions();
   const signups = all.filter((s) => s.message === SIGNUP_TAG);
   const messages = all.filter((s) => s.message !== SIGNUP_TAG);
 
   const tabs = [
+    { key: "signups", label: "Email list signups", count: signups.length },
     { key: "messages", label: "Messages", count: messages.length },
-    { key: "signups", label: "Email list", count: signups.length },
   ];
 
   return (
     <div className="min-h-screen bg-neutral-100 text-neutral-900">
-      <div className="flex justify-between items-center px-8 py-4 bg-neutral-950">
-        <Link href="/admin" className="text-white font-bold tracking-tight text-sm">
-          ← EWB-UVM Admin
-        </Link>
-        <Link href="/" className="text-neutral-400 text-sm hover:text-white transition-colors">
-          View site
-        </Link>
-      </div>
+      <AdminTopBar title="Inbox" />
 
-      <div className="max-w-3xl mx-auto px-8 py-14">
-        <p className="text-xs uppercase tracking-widest text-neutral-500 mb-2">Inbox</p>
-        <h1 className="text-3xl font-bold tracking-tight mb-6">Contact submissions</h1>
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold tracking-tight mb-2">Inbox</h1>
+        <p className="text-neutral-600 mb-6">
+          Everyone who signed up for the email list on the Contact page, plus any messages sent
+          through the website&apos;s older contact form.
+        </p>
 
         <div className="flex gap-2 mb-8" role="tablist">
           {tabs.map((t) => (
@@ -72,7 +69,7 @@ export default async function AdminInboxPage({
 
         {tab === "messages" &&
           (messages.length === 0 ? (
-            <p className="text-neutral-500">No messages yet.</p>
+            <p className="text-neutral-500">No messages.</p>
           ) : (
             <ul className="space-y-4">
               {messages.map((m, i) => (
@@ -94,12 +91,13 @@ export default async function AdminInboxPage({
 
         {tab === "signups" &&
           (signups.length === 0 ? (
-            <p className="text-neutral-500">No email-list signups yet.</p>
+            <p className="text-neutral-500">No one has signed up for the email list yet.</p>
           ) : (
             <>
               <label className="block mb-8">
-                <span className="block text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-1">
-                  All addresses (paste into BCC)
+                <span className="block text-sm font-semibold text-neutral-800">Every address at once</span>
+                <span className="block text-sm text-neutral-500 mb-1.5">
+                  Copy this and paste it into the BCC line of an email to reach everyone on the list.
                 </span>
                 <textarea
                   readOnly
@@ -109,8 +107,9 @@ export default async function AdminInboxPage({
                 />
               </label>
               <label className="block mb-8">
-                <span className="block text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-1">
-                  Listserv bulk add (one &quot;email Full Name&quot; per line)
+                <span className="block text-sm font-semibold text-neutral-800">For the club listserv</span>
+                <span className="block text-sm text-neutral-500 mb-1.5">
+                  One person per line, in the format the listserv&apos;s bulk add page expects.
                 </span>
                 <textarea
                   readOnly
@@ -121,7 +120,7 @@ export default async function AdminInboxPage({
                     .join("\n")}
                 />
                 <span className="block text-sm text-neutral-500 mt-1">
-                  Paste into the listserv&apos;s bulk add page (needs list owner access).
+                  Paste into the listserv&apos;s bulk add page. You need to be a list owner.
                 </span>
               </label>
               <div className="border border-neutral-300 rounded-lg overflow-hidden bg-white">

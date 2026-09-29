@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { addContactSubmission } from "@/lib/store";
+import { addContactSubmission, getSettings } from "@/lib/store";
 import { sessionToken } from "@/lib/auth";
 
 export async function login(formData: FormData) {
@@ -47,6 +47,16 @@ function rateLimited(ip: string): boolean {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Error messages name the chapter inbox so people have a real fallback. Settings
+// can live in the same store that just failed, so never let this lookup throw.
+async function emailUs(): Promise<string> {
+  try {
+    const { contactEmail } = await getSettings();
+    if (contactEmail) return `email us at ${contactEmail}`;
+  } catch {}
+  return "email us directly";
+}
+
 export async function submitContact(
   _prev: ContactState,
   formData: FormData
@@ -62,7 +72,7 @@ export async function submitContact(
     h.get("x-real-ip") ||
     "unknown";
   if (rateLimited(ip)) {
-    return { ok: false, error: "Too many messages — please try again later or email us directly." };
+    return { ok: false, error: `Too many messages. Please try again in a few minutes, or ${await emailUs()}.` };
   }
 
   const name = (formData.get("name") as string)?.trim();
@@ -80,7 +90,7 @@ export async function submitContact(
     return { ok: true };
   } catch (e) {
     console.error(e);
-    return { ok: false, error: "Something went wrong — please email us directly." };
+    return { ok: false, error: `Something went wrong on our end. Please ${await emailUs()}.` };
   }
 }
 
@@ -102,7 +112,7 @@ export async function submitSignup(
     h.get("x-real-ip") ||
     "unknown";
   if (rateLimited(ip)) {
-    return { ok: false, error: "Too many signups — please try again later or email us directly." };
+    return { ok: false, error: `Too many signups. Please try again in a few minutes, or ${await emailUs()}.` };
   }
 
   const name = (formData.get("name") as string)?.trim();
@@ -119,6 +129,6 @@ export async function submitSignup(
     return { ok: true };
   } catch (e) {
     console.error(e);
-    return { ok: false, error: "Something went wrong — please email us directly." };
+    return { ok: false, error: `Something went wrong on our end. Please ${await emailUs()}.` };
   }
 }

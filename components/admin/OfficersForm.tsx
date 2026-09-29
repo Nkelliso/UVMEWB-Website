@@ -1,86 +1,169 @@
 "use client";
 
-import { useState } from "react";
-import AdminChrome, { Field, ImageField, Row, Card, AddButton } from "./AdminChrome";
+import AdminChrome, { Field, ImageField, Row, Card, AddButton, MoveButtons, Section } from "./AdminChrome";
+import { useEditable, move } from "./useEditable";
 import { saveOfficersAction } from "@/app/admin/actions";
 import type { OfficerBoard, Officer, OfficerGroup } from "@/lib/types";
 
+function PersonFields({ o, onChange }: { o: Officer; onChange: (patch: Partial<Officer>) => void }) {
+  return (
+    <>
+      <Row>
+        <Field label="Name" value={o.name} onChange={(v) => onChange({ name: v })} />
+        <Field label="Role" value={o.title} placeholder="e.g. Treasurer" onChange={(v) => onChange({ title: v })} />
+      </Row>
+      <ImageField
+        label="Headshot (optional)"
+        hint="Without one, the site shows their initials."
+        minWidth={500}
+        value={o.photoUrl ?? ""}
+        onChange={(v) => onChange({ photoUrl: v })}
+      />
+    </>
+  );
+}
+
 export default function OfficersForm({ initial }: { initial: OfficerBoard }) {
-  const [board, setBoard] = useState<OfficerBoard>(initial);
+  const editor = useEditable<OfficerBoard>(initial);
+  const board = editor.value;
 
-  const setExec = (list: Officer[]) => setBoard((b) => ({ ...b, executiveBoard: list }));
-  const updExec = (i: number, patch: Partial<Officer>) =>
-    setExec(board.executiveBoard.map((o, j) => (j === i ? { ...o, ...patch } : o)));
-
-  const setGroups = (list: OfficerGroup[]) => setBoard((b) => ({ ...b, projectDirectors: list }));
-  const updGroup = (gi: number, patch: Partial<OfficerGroup>) =>
-    setGroups(board.projectDirectors.map((g, j) => (j === gi ? { ...g, ...patch } : g)));
-  const updGroupOfficer = (gi: number, oi: number, patch: Partial<Officer>) =>
-    updGroup(gi, {
-      officers: board.projectDirectors[gi].officers.map((o, j) =>
-        j === oi ? { ...o, ...patch } : o
-      ),
-    });
+  const setExec = (list: Officer[], label?: string) =>
+    editor.change({ ...board, executiveBoard: list }, label);
+  const setGroups = (list: OfficerGroup[], label?: string) =>
+    editor.change({ ...board, projectDirectors: list }, label);
+  const updGroup = (gi: number, patch: Partial<OfficerGroup>, label?: string) =>
+    setGroups(board.projectDirectors.map((g, j) => (j === gi ? { ...g, ...patch } : g)), label);
 
   return (
     <AdminChrome
-      title="Officer Board"
-      intro="Photos render as placeholders until you upload or paste one. Update this each year as officers change."
-      value={board}
+      title="Officer board"
+      editor={editor}
       onSave={saveOfficersAction}
+      viewHref="/about/officer-board"
+      intro={
+        <p>
+          The people on the Meet our team page. Update this at the start of each year when
+          officers change.
+        </p>
+      }
     >
       <Field
-        label="Officers as of"
+        label="Which year or semester this list is for"
+        hint="The page shows this, for example Fall 2026."
         value={board.asOf}
-        onChange={(v) => setBoard((b) => ({ ...b, asOf: v }))}
-        placeholder="e.g. Fall 2025"
+        onChange={(v) => editor.change({ ...board, asOf: v })}
       />
 
-      <h2 className="text-lg font-bold mt-8 mb-3">Faculty Advisor</h2>
-      <Card>
-        <Row>
-          <Field label="Title" value={board.facultyAdvisor.title} onChange={(v) => setBoard((b) => ({ ...b, facultyAdvisor: { ...b.facultyAdvisor, title: v } }))} />
-          <Field label="Name" value={board.facultyAdvisor.name} onChange={(v) => setBoard((b) => ({ ...b, facultyAdvisor: { ...b.facultyAdvisor, name: v } }))} />
-        </Row>
-        <ImageField label="Photo (optional)" value={board.facultyAdvisor.photoUrl ?? ""} onChange={(v) => setBoard((b) => ({ ...b, facultyAdvisor: { ...b.facultyAdvisor, photoUrl: v } }))} />
-      </Card>
-
-      <h2 className="text-lg font-bold mt-8 mb-3">Executive Board</h2>
-      {board.executiveBoard.map((o, i) => (
-        <Card key={i} onRemove={() => setExec(board.executiveBoard.filter((_, j) => j !== i))}>
-          <Row>
-            <Field label="Title" value={o.title} onChange={(v) => updExec(i, { title: v })} />
-            <Field label="Name" value={o.name} onChange={(v) => updExec(i, { name: v })} />
-          </Row>
-          <ImageField label="Photo (optional)" value={o.photoUrl ?? ""} onChange={(v) => updExec(i, { photoUrl: v })} />
+      <Section title="Faculty advisor">
+        <Card>
+          <PersonFields
+            o={board.facultyAdvisor}
+            onChange={(patch) =>
+              editor.change({ ...board, facultyAdvisor: { ...board.facultyAdvisor, ...patch } })
+            }
+          />
         </Card>
-      ))}
-      <AddButton label="Add officer" onClick={() => setExec([...board.executiveBoard, { title: "", name: "" }])} />
+      </Section>
 
-      <h2 className="text-lg font-bold mt-8 mb-3">Project Directors</h2>
-      {board.projectDirectors.map((g, gi) => (
-        <div key={gi} className="border border-neutral-300 rounded-lg bg-white p-4 mb-4">
-          <div className="flex justify-between items-start">
-            <div className="flex-1 mr-4">
-              <Field label="Group heading" value={g.heading ?? ""} onChange={(v) => updGroup(gi, { heading: v })} placeholder="e.g. International Project" />
+      <Section title="Executive board" hint="This is the order they appear in on the page.">
+        {board.executiveBoard.map((o, i) => (
+          <Card
+            key={i}
+            title={o.name || "(no name yet)"}
+            move={
+              <MoveButtons
+                what={o.name}
+                onUp={() => setExec(move(board.executiveBoard, i, -1), `Moved ${o.name}`)}
+                onDown={() => setExec(move(board.executiveBoard, i, 1), `Moved ${o.name}`)}
+                isFirst={i === 0}
+                isLast={i === board.executiveBoard.length - 1}
+              />
+            }
+            onRemove={() =>
+              setExec(board.executiveBoard.filter((_, j) => j !== i), `Removed ${o.name || "officer"}`)
+            }
+          >
+            <PersonFields
+              o={o}
+              onChange={(patch) =>
+                setExec(board.executiveBoard.map((x, j) => (j === i ? { ...x, ...patch } : x)))
+              }
+            />
+          </Card>
+        ))}
+        <AddButton
+          label="Add an officer"
+          onClick={() => setExec([...board.executiveBoard, { title: "", name: "" }], "Added an officer")}
+        />
+      </Section>
+
+      <Section title="Project team leaders" hint="Leaders are grouped by project team, like International or Domestic.">
+        {board.projectDirectors.map((g, gi) => (
+          <div key={gi} className="border border-neutral-300 rounded-lg bg-neutral-50 p-4 mb-4">
+            <div className="flex flex-wrap justify-between items-start gap-x-4">
+              <div className="flex-1 min-w-48">
+                <Field
+                  label="Team name"
+                  value={g.heading ?? ""}
+                  placeholder="e.g. International Project"
+                  onChange={(v) => updGroup(gi, { heading: v })}
+                />
+              </div>
+              <div className="flex gap-3 items-center sm:mt-7 mb-4">
+                <MoveButtons
+                  what={g.heading ?? "team"}
+                  onUp={() => setGroups(move(board.projectDirectors, gi, -1), `Moved ${g.heading || "a team"}`)}
+                  onDown={() => setGroups(move(board.projectDirectors, gi, 1), `Moved ${g.heading || "a team"}`)}
+                  isFirst={gi === 0}
+                  isLast={gi === board.projectDirectors.length - 1}
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGroups(board.projectDirectors.filter((_, j) => j !== gi), `Removed ${g.heading || "a team"}`)
+                  }
+                  className="text-sm text-red-700 hover:text-red-900"
+                >
+                  Remove team
+                </button>
+              </div>
             </div>
-            <button onClick={() => setGroups(board.projectDirectors.filter((_, j) => j !== gi))} className="text-xs text-red-600 hover:text-red-800 mt-6">
-              Remove group
-            </button>
+            {g.officers.map((o, oi) => (
+              <Card
+                key={oi}
+                title={o.name || "(no name yet)"}
+                move={
+                  <MoveButtons
+                    what={o.name}
+                    onUp={() => updGroup(gi, { officers: move(g.officers, oi, -1) }, `Moved ${o.name}`)}
+                    onDown={() => updGroup(gi, { officers: move(g.officers, oi, 1) }, `Moved ${o.name}`)}
+                    isFirst={oi === 0}
+                    isLast={oi === g.officers.length - 1}
+                  />
+                }
+                onRemove={() =>
+                  updGroup(gi, { officers: g.officers.filter((_, j) => j !== oi) }, `Removed ${o.name || "leader"}`)
+                }
+              >
+                <PersonFields
+                  o={o}
+                  onChange={(patch) =>
+                    updGroup(gi, { officers: g.officers.map((x, j) => (j === oi ? { ...x, ...patch } : x)) })
+                  }
+                />
+              </Card>
+            ))}
+            <AddButton
+              label="Add a leader to this team"
+              onClick={() => updGroup(gi, { officers: [...g.officers, { title: "", name: "" }] }, "Added a leader")}
+            />
           </div>
-          {g.officers.map((o, oi) => (
-            <Card key={oi} onRemove={() => updGroup(gi, { officers: g.officers.filter((_, j) => j !== oi) })}>
-              <Row>
-                <Field label="Title" value={o.title} onChange={(v) => updGroupOfficer(gi, oi, { title: v })} />
-                <Field label="Name" value={o.name} onChange={(v) => updGroupOfficer(gi, oi, { name: v })} />
-              </Row>
-              <ImageField label="Photo (optional)" value={o.photoUrl ?? ""} onChange={(v) => updGroupOfficer(gi, oi, { photoUrl: v })} />
-            </Card>
-          ))}
-          <AddButton label="Add director" onClick={() => updGroup(gi, { officers: [...g.officers, { title: "", name: "" }] })} />
-        </div>
-      ))}
-      <AddButton label="Add director group" onClick={() => setGroups([...board.projectDirectors, { heading: "", officers: [] }])} />
+        ))}
+        <AddButton
+          label="Add a project team"
+          onClick={() => setGroups([...board.projectDirectors, { heading: "", officers: [] }], "Added a team")}
+        />
+      </Section>
     </AdminChrome>
   );
 }

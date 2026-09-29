@@ -20,9 +20,9 @@
   --chalk: oklch(97% 0.01 95);
   --chalk-soft: oklch(80% 0.02 130);
 
-  /* primary — forest green */
-  --green: oklch(52% 0.11 158);
-  --green-deep: oklch(42% 0.10 158);
+  /* primary: UVM Catamount Green #154734 (UVM brand guide) */
+  --green: oklch(35.9% 0.063 164.4);
+  --green-deep: oklch(28% 0.055 164.4);
 
   /* accent — warm gold */
   --gold: oklch(80% 0.13 80);
@@ -33,6 +33,11 @@
   /* rules */
   --rule: oklch(88% 0.01 95);
   --rule-dark: oklch(44% 0.04 158);
+  --field-border: oklch(60% 0.025 158); /* form-field outline — 3.5:1 on paper (WCAG 1.4.11) */
+
+  /* semantic states — both 6:1+ on paper */
+  --danger: oklch(50% 0.17 27);
+  --success: var(--green);
 
   /* fonts */
   --font-display: var(--font-display), "Manrope", system-ui, sans-serif;
@@ -642,7 +647,7 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--green-deep);
-  background: oklch(52% 0.11 158 / 0.1);
+  background: oklch(35.9% 0.063 164.4 / 0.1);
   border-radius: 999px;
   padding: 0.25rem 0.65rem;
 }
@@ -783,7 +788,7 @@ body {
 .ewb-input,
 .ewb-textarea {
   width: 100%;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--field-border);
   border-radius: var(--radius);
   background: var(--paper);
   padding: 0.75rem 0.9rem;
@@ -1009,6 +1014,21 @@ body {
 .ewb-shell-head.is-tall .ewb-shell-bg {
   background-position: center top;
 }
+/* Fit variant (PageShell `imageRatio`, Sponsors hero): the band takes the
+   photo's shape, capped at one screen height, so the full scene shows and only
+   a sliver of top/bottom is trimmed on wide windows. Width pinned for the same
+   reason as .is-tall. */
+@media (min-width: 761px) {
+  .theme-immersive .ewb-shell-head.is-fit {
+    width: 100%;
+    aspect-ratio: var(--head-ratio);
+    min-height: 0;
+    max-height: 100svh;
+  }
+  .ewb-shell-head.is-fit .ewb-shell-bg {
+    background-position: center;
+  }
+}
 .ewb-shell-bg {
   position: absolute;
   inset: 0;
@@ -1128,7 +1148,9 @@ body {
    band; the header's colour states (white-on-photo → green bar) sit behind it. */
 .imm-brand-logo {
   display: block;
-  height: 3.8rem;
+  /* /logo.svg is trimmed to the artwork (the old PNG carried ~36% empty
+     padding at 3.8rem), so this is slightly larger than before, not smaller. */
+  height: 2.75rem;
   width: auto;
   max-width: min(72vw, 22rem);
   object-fit: contain;
@@ -1150,25 +1172,43 @@ body {
   align-items: center;
   gap: 0.1rem;
 }
+/* Sentence-case bold links (nav-lab variation 1, 2026-09-29): reads written,
+   not templated. Hover/current carry a chalk underline, not a colour swap. */
 .imm-nav-link {
-  font-family: var(--font-display);
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: var(--imm-track-wide);
-  text-transform: uppercase;
+  font-family: var(--font-button), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
   white-space: nowrap;
-  padding-block: 0.5rem;
-  color: var(--chalk-soft);
-  transition: color var(--dur) var(--ease-out);
+  padding-block: 0.35rem;
+  color: var(--chalk);
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--dur) var(--ease-out);
 }
 .imm-nav-link:hover,
-.imm-nav-link[data-active="true"] {
-  color: var(--gold);
+.imm-nav-link[data-active="true"],
+.imm-nav-item:hover .imm-nav-link {
+  border-bottom-color: var(--chalk);
 }
-.imm-nav-link[data-active="true"] {
-  text-decoration: underline;
-  text-underline-offset: 0.4em;
-  text-decoration-thickness: 2px;
+/* Gold primary action at the end of the link row. */
+.imm-nav-cta {
+  font-family: var(--font-button), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+  padding: 0.55rem 1rem;
+  border-radius: 3px;
+  background: var(--gold);
+  color: var(--ink);
+  transition: background var(--dur) var(--ease-out);
+}
+.imm-nav-cta:hover {
+  background: var(--gold-deep);
+}
+.imm-nav-link:focus-visible,
+.imm-nav-cta:focus-visible,
+.imm-dropdown-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
 }
 .imm-nav-caret {
   /* Hidden on desktop (hover + keyboard focus-within open the submenu). Only the
@@ -1228,39 +1268,38 @@ body {
 
 .imm-dropdown {
   position: absolute;
-  /* Anchor to the RIGHT edge of the nav word so the panel opens leftward and its
-     right edge lines up with the end of the word (Cornell-style). */
-  right: 0;
+  /* Left-aligned under its word; padding-top bridges the hover gap. */
+  left: -1rem;
   top: 100%;
-  padding-top: 0.85rem;
+  padding-top: 0.75rem;
 }
 .imm-dropdown[data-open="false"] {
   display: none;
 }
-/* Cornell-style dropdown: a solid black panel with right-aligned white links
-   (matches the studied EWB-Cornell nav). First pass — refine against the video
-   reference. */
+/* Paper card dropdown. */
 .imm-dropdown-inner {
-  min-width: 12.5rem;
-  border: none;
-  background: oklch(15% 0.02 158);
-  padding: 0.55rem 0.9rem;
-  box-shadow: 0 24px 46px -20px oklch(12% 0.03 158 / 0.6);
+  min-width: 10rem;
+  width: max-content;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+  padding: 0.3rem;
+  box-shadow: 0 12px 32px oklch(14% 0.03 158 / 0.28);
 }
 .imm-dropdown-link {
   display: block;
-  text-align: right;
-  padding: 0.3rem 0;
-  font-family: var(--font-display);
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-  color: #fff;
-  transition: color var(--dur) var(--ease-out);
+  padding: 0.4rem 0.65rem;
+  border-radius: 4px;
+  font-family: var(--font-button), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink);
+  transition: background var(--dur) var(--ease-out);
 }
 .imm-dropdown-link:hover,
 .imm-dropdown-link[data-active="true"] {
-  background: transparent;
-  color: var(--gold);
+  background: var(--paper-2);
 }
 
 /* ───────────────  Cornell-style project detail pages  ─────────────── */
@@ -2199,12 +2238,11 @@ body {
   }
 }
 .spon-way-media {
+  position: relative;
   aspect-ratio: 4 / 3;
+  overflow: hidden;
   border-radius: var(--radius);
   background-color: var(--poster-field, oklch(30% 0.06 158));
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 .spon-way-title {
   font-family: var(--font-display);
@@ -2427,9 +2465,14 @@ body {
     justify-content: space-between;
   }
   .imm-nav-link {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     padding-block: 0.9rem;
     flex: 1;
+    border-bottom: 0;
+  }
+  .imm-nav-cta {
+    margin-top: 1.25rem;
+    text-align: center;
   }
   /* carets aren't needed — every submenu is expanded by default in the drawer */
   .imm-nav-caret {
@@ -2445,15 +2488,24 @@ body {
   }
   .imm-dropdown-inner {
     min-width: 0;
+    width: auto;
     border: none;
+    border-radius: 0;
     background: transparent;
     backdrop-filter: none;
     box-shadow: none;
     padding: 0 0 0.6rem 0.6rem;
   }
   .imm-dropdown-link {
-    text-align: left;
-    font-size: 0.9rem;
+    padding: 0.35rem 0;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--chalk-soft);
+  }
+  .imm-dropdown-link:hover,
+  .imm-dropdown-link[data-active="true"] {
+    background: transparent;
+    color: var(--gold);
   }
   .imm-brand small {
     display: none;
@@ -2461,4 +2513,18 @@ body {
   .imm-poster.is-hero .imm-poster-content {
     align-items: flex-start;
   }
+}
+
+/* ─────────────────────────────  headline face: Oswald on the home page  ────
+ * The home page's poster headlines share the hero's condensed Oswald face.
+ * Interior pages keep their own headline faces (Montserrat titles, Fraunces on
+ * the officer board). Scoped 2026-09-29 after an Oswald-everywhere pass.
+ * The home hero title keeps its own rule (.imm-poster.is-hero .imm-poster-title
+ * outranks this). */
+.theme-immersive {
+  --font-headline: var(--font-hero), "Oswald", "Arial Narrow", sans-serif;
+}
+.theme-immersive .imm-poster-title {
+  font-family: var(--font-headline);
+  letter-spacing: 0.03em;
 }

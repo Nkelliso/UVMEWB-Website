@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import EmailSignupForm from "@/components/EmailSignupForm";
 import { getSettings } from "@/lib/store";
+import { DEFAULT_CONTACT_PEOPLE } from "@/lib/contact-people";
+import { CONTACT_TEXT, withDefaults } from "@/lib/page-text";
 
 export const metadata: Metadata = {
   title: "Contact & Get Involved · EWB UVM",
   description:
     "Join the University of Vermont chapter of Engineers Without Borders, open to students of every major. Reach us by form or email.",
 };
-
-// Outreach liaisons shown at the foot of the page. Email/photo fall back
-// gracefully (chapter email + initials tile) until real ones are added.
-// TODO: add Leah's and Luke's real email addresses below.
-const LIAISONS = [
-  { name: "Leah Dennis", role: "Outreach Coordinator", email: "", photo: "" },
-  { name: "Luke O’Brien", role: "Outreach Coordinator", email: "", photo: "" },
-];
 
 const initials = (name: string) =>
   name
@@ -27,6 +21,13 @@ const initials = (name: string) =>
 export default async function ContactPage() {
   const settings = await getSettings();
   const heroImage = settings.sectionImages?.contact || "/photos/contact.jpg";
+  // Edited in /admin/contact. Email/photo fall back gracefully (chapter email +
+  // initials tile) until real ones are added.
+  const people = settings.contactPeople?.length
+    ? settings.contactPeople
+    : DEFAULT_CONTACT_PEOPLE;
+  // Wording is edited in /admin/contact; blank fields keep the default text.
+  const t = withDefaults(CONTACT_TEXT, settings.contactText);
 
   return (
     <div className="ewb-shell">
@@ -38,11 +39,7 @@ export default async function ContactPage() {
         />
         <div className="ewb-shell-scrim" />
         <div className="ewb-wrap ctc-hero-inner">
-          <h1>Join the chapter</h1>
-          <p className="ctc-hero-sub">
-            Engineers Without Borders welcomes students of every major. No
-            experience required. Come build with us.
-          </p>
+          <h1>{t.title}</h1>
         </div>
       </header>
 
@@ -51,20 +48,13 @@ export default async function ContactPage() {
           {/* Get involved + meeting info */}
           <section className="ctc-involve">
             <div className="ctc-involve-text">
-              <h2>All majors welcome</h2>
-              <p>
-                You don’t have to be an engineer to make an impact! Our members
-                come from majors all across the university. Together we design
-                real infrastructure, fundraise, work with local businesses, and
-                create real change in people’s lives. Come meet us at a
-                meeting!
-              </p>
+              <h2>{t.welcomeTitle}</h2>
+              <p>{t.welcomeBody}</p>
             </div>
             <aside className="ctc-meeting-card">
-              <h3 className="ctc-meeting-label">Meetings</h3>
+              <h3 className="ctc-meeting-label">{t.meetingsTitle}</h3>
               <p className="ctc-meeting-body">
-                Each of our project teams meets every week during the semester,
-                so there’s always a meeting to drop into.{" "}
+                {t.meetingsBody}{" "}
                 <a href="#email-list">Join our email list</a> or
                 find us on{" "}
                 {settings.instagram ? (
@@ -81,10 +71,9 @@ export default async function ContactPage() {
 
           {/* Email list signup + chapter email */}
           <section className="ctc-reach" id="email-list">
-            <h2>Sign up for our email list</h2>
+            <h2>{t.listTitle}</h2>
             <p className="ewb-lede ctc-reach-lede">
-              Get meeting times, project news, and ways to get involved. Have a
-              question? Email{" "}
+              {t.listBody} Have a question? Email{" "}
               <a href={`mailto:${settings.contactEmail}`}>
                 {settings.contactEmail}
               </a>
@@ -95,12 +84,12 @@ export default async function ContactPage() {
 
           {/* Outreach liaisons */}
           <section className="ctc-people">
-            <h2>Contact emails</h2>
+            <h2>{t.peopleTitle}</h2>
             <div className="ctc-people-grid">
-              {LIAISONS.map((p) => {
+              {people.map((p, i) => {
                 const email = p.email || settings.contactEmail;
                 return (
-                  <article key={p.name} className="ctc-person">
+                  <article key={i} className="ctc-person">
                     {p.photo ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

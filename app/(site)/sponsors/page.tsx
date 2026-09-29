@@ -1,6 +1,10 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import Image from "next/image";
+import { canOptimize } from "@/lib/can-optimize";
 import Link from "next/link";
 import { getSponsors, getSettings } from "@/lib/store";
+import { SPONSORS_TEXT, withDefaults } from "@/lib/page-text";
 
 export const metadata: Metadata = {
   title: "Sponsors & Partners · EWB UVM",
@@ -10,42 +14,26 @@ export const metadata: Metadata = {
 
 const BASE = "";
 
-// Structural page content (the "ways professionals get involved" block). Our own
-// copy + framing — the Cornell layout, our voice. Photos fall back to existing
-// site photos until dedicated ones are placed via /admin.
-const WAYS: {
-  title: string;
-  body: string;
-  image: string;
-  filter?: string;
-}[] = [
-  {
-    title: "Corporate Partners",
-    body: "Fuel our projects through financial support, in-kind donations, and collaborative opportunities. Put your name behind clean water and infrastructure that outlasts us.",
-    image: "/photos/giving.jpg",
-    // Source photo is flat and overcast (low contrast, hazy). Correct toward
-    // the same punch the other two WAYS photos already have natively.
-    filter: "saturate(1.3) contrast(1.12) brightness(1.08)",
-  },
-  {
-    title: "Professional Mentors",
-    body: "Licensed engineers and technical experts who guide our student teams and help ensure every design meets real-world industry standards.",
-    image: "/photos/projects.jpg",
-  },
-  {
-    title: "Alumni & Friends",
-    body: "Former members and community supporters who keep the mission moving through mentorship, networking, and ongoing project support.",
-    image: "/photos/site/cooper-uvm.jpg",
-    // Dusk lighting reads slightly dim next to the other two.
-    filter: "saturate(1.12) brightness(1.1)",
-  },
-];
+// Colour corrections tuned for the default "ways" photos (see SPONSORS_TEXT).
+// They only apply while a card still uses that exact photo; a newly chosen
+// photo shows as uploaded.
+const DEFAULT_PHOTO_FILTERS: Record<string, string> = {
+  // Flat, overcast source: correct toward the punch of the other two.
+  "/photos/giving.jpg": "saturate(1.3) contrast(1.12) brightness(1.08)",
+  // Dusk lighting reads slightly dim next to the other two.
+  "/photos/site/cooper-uvm.jpg": "saturate(1.12) brightness(1.1)",
+};
 
 export default async function SponsorsPage() {
   const [sponsors, settings] = await Promise.all([getSponsors(), getSettings()]);
   const hasPackage = !!settings.sponsorshipPackageUrl;
-  // Hardcoded like the "Our work" page header — not settings-driven.
-  const headerImage = "/photos/site/rwanda-schoolkids-road.jpg";
+  // Wording and card photos are edited in /admin/sponsors-page.
+  const t = withDefaults(SPONSORS_TEXT, settings.sponsorsText);
+  // Changed from /admin/photos ("Sponsors page: header", cropped 4:3 to match
+  // the header band's imageRatio). A new key on purpose: the old
+  // sectionImages.sponsors still holds a stale portrait photo in saved data.
+  const headerImage =
+    settings.sectionImages?.sponsorsHeader || "/photos/site/rwanda-schoolkids-road.jpg";
   const namedSponsors = sponsors.filter(
     (s) => s.name && !/your organization|become a sponsor/i.test(s.name)
   );
@@ -55,7 +43,11 @@ export default async function SponsorsPage() {
       {/* Cornell-style overlay hero — title + package CTA on the left, intro on
           the right, both sitting over the header photo. Keeps the .ewb-shell-head
           class so the sticky header knows this page opens on a photo band. */}
-      <header className="ewb-shell-head spon-hero">
+      <header
+        className="ewb-shell-head spon-hero is-fit"
+        // Photo is 4:3; the band takes that shape, capped at one screen height.
+        style={{ "--head-ratio": 4 / 3 } as CSSProperties}
+      >
         <div
           className="ewb-shell-bg"
           style={{ backgroundImage: `url(${headerImage})` }}
@@ -63,7 +55,7 @@ export default async function SponsorsPage() {
         <div className="ewb-shell-scrim" />
         <div className="ewb-wrap spon-hero-grid">
           <div className="spon-hero-left">
-            <h1>Sponsors</h1>
+            <h1>{t.title}</h1>
             {hasPackage ? (
               <a
                 href={settings.sponsorshipPackageUrl}
@@ -71,24 +63,19 @@ export default async function SponsorsPage() {
                 rel="noreferrer"
                 className="ewb-btn ewb-btn-gold spon-hero-cta"
               >
-                Sponsorship Package <span aria-hidden>→</span>
+                {t.buttonLabel} <span aria-hidden>→</span>
               </a>
             ) : (
               <Link
                 href={`${BASE}/contact`}
                 className="ewb-btn ewb-btn-gold spon-hero-cta"
               >
-                Sponsorship Package <span aria-hidden>→</span>
+                {t.buttonLabel} <span aria-hidden>→</span>
               </Link>
             )}
           </div>
           <div className="spon-hero-right">
-            <p className="spon-hero-lede">
-              Behind every successful project is a community of supporters. From
-              corporate partners and professional mentors to our alumni network,
-              we’re proud to be backed by those who believe in student-led,
-              community-driven engineering.
-            </p>
+            <p className="spon-hero-lede">{t.intro}</p>
           </div>
         </div>
       </header>
@@ -98,17 +85,23 @@ export default async function SponsorsPage() {
           {/* Ways professionals get involved */}
           <section className="spon-ways">
             <div className="spon-ways-grid">
-              {WAYS.map((w) => (
-                <article key={w.title} className="spon-way">
-                  <div
-                    className="spon-way-media"
-                    style={{
-                      backgroundImage: `url(${w.image})`,
-                      filter: w.filter,
-                    }}
-                    role="img"
-                    aria-label={w.title}
-                  />
+              {t.ways.map((w, i) => (
+                <article key={i} className="spon-way">
+                  {/* next/image serves a copy resized to the card (~320px, 2-3x
+                      for sharp screens). Shrinking the 2000px+ original 7x in
+                      CSS, through a filter, rendered visibly jagged. */}
+                  <div className="spon-way-media">
+                    {w.image && (
+                      <Image
+                        src={w.image}
+                        alt={w.title}
+                        fill
+                        sizes="(max-width: 760px) 100vw, 33vw"
+                        unoptimized={!canOptimize(w.image)}
+                        style={{ objectFit: "cover", filter: DEFAULT_PHOTO_FILTERS[w.image] }}
+                      />
+                    )}
+                  </div>
                   <h3 className="spon-way-title">{w.title}</h3>
                   <p className="spon-way-body">{w.body}</p>
                 </article>
@@ -118,7 +111,7 @@ export default async function SponsorsPage() {
 
           {/* Sponsor / partner logo strip */}
           <section className="spon-logos">
-            <p className="ewb-sponsor-tier-name">Our sponsors &amp; partners</p>
+            <p className="ewb-sponsor-tier-name">{t.logosTitle}</p>
             {namedSponsors.length > 0 ? (
               <div className="spon-logo-strip">
                 {namedSponsors.map((s, i) => {
@@ -146,13 +139,10 @@ export default async function SponsorsPage() {
                 })}
               </div>
             ) : (
-              <p className="ewb-note spon-logos-empty">
-                Be one of our founding partners. Your organization’s logo will
-                appear here.
-              </p>
+              <p className="ewb-note spon-logos-empty">{t.logosEmpty}</p>
             )}
             <p className="ewb-note spon-contact">
-              Interested in partnering? Email{" "}
+              {t.partnerPrompt} Email{" "}
               <a href={`mailto:${settings.contactEmail}`}>
                 {settings.contactEmail}
               </a>

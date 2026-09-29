@@ -5,6 +5,7 @@ import { getProject } from "@/lib/store";
 import ModelViewer from "@/components/ModelViewer";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import Placeholder from "@/components/Placeholder";
+import { DEFAULT_MODELS_CAPTION } from "@/lib/project-defaults";
 
 // No generateStaticParams: project content is CMS-backed and edited at runtime
 // via /admin, so these detail pages render on demand (always fresh).
@@ -122,9 +123,11 @@ export default async function ProjectDetail({
         {project.models && project.models.length > 0 && (
           <section className="proj-model-section">
             <h2 className="proj-section-heading">Explore in 3D</h2>
-            <p className="proj-model-caption">
-              Photogrammetry scans captured in Kajinge, Assessment Trip 2025.
-            </p>
+            {(project.modelsCaption ?? DEFAULT_MODELS_CAPTION) && (
+              <p className="proj-model-caption">
+                {project.modelsCaption ?? DEFAULT_MODELS_CAPTION}
+              </p>
+            )}
             <div className="proj-models-grid">
               {project.models.map((m) => (
                 <figure key={m.src} className="proj-model-item">

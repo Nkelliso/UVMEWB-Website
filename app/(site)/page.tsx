@@ -1,6 +1,7 @@
 import PosterSection from "@/components/immersive/PosterSection";
 import { getSettings } from "@/lib/store";
 import { HOME_COPY } from "@/lib/home-copy";
+import { HERO_CUTOUTS } from "@/lib/hero-cutouts";
 
 const BASE = "";
 
@@ -10,11 +11,6 @@ const BASE = "";
 // auto-applies the .is-parallax bleed override.
 const STRENGTH = 210;
 
-// People cut out of a specific hero photo, so the headline can sit behind their
-// heads. Keyed by photo: a different hero simply renders without the effect.
-const HERO_CUTOUTS: Record<string, string> = {
-  "/photos/site/home-hero-team.jpg": "/photos/site/home-hero-team-cutout.webp",
-};
 
 export default async function ImmersiveHome() {
   const settings = await getSettings();

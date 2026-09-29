@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 /** Standard interior-page wrapper: dark header band with eyebrow + title,
  *  then a constrained body.
@@ -14,6 +14,7 @@ export default function PageShell({
   narrow = true,
   image,
   tall = false,
+  imageRatio,
 }: {
   eyebrow?: string;
   title: string;
@@ -23,10 +24,17 @@ export default function PageShell({
   /** Grow the photographic header band to a 2:1 crop anchored at the top of the
    *  photo, so most of the image shows instead of a thin band. */
   tall?: boolean;
+  /** Width / height of `image`. When set, the band takes the photo's exact
+   *  shape on desktop so the whole photo shows (no crop); phones keep the
+   *  standard band so the title still fits. */
+  imageRatio?: number;
 }) {
   return (
     <div className="ewb-shell">
-      <div className={`ewb-shell-head${tall ? " is-tall" : ""}`}>
+      <div
+        className={`ewb-shell-head${tall ? " is-tall" : ""}${imageRatio ? " is-fit" : ""}`}
+        style={imageRatio ? ({ "--head-ratio": imageRatio } as CSSProperties) : undefined}
+      >
         {image && (
           <>
             <div

@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import Placeholder from "@/components/Placeholder";
-import { getProjects } from "@/lib/store";
+import { getProjects, getSettings } from "@/lib/store";
+import { PROJECTS_TEXT, withDefaults } from "@/lib/page-text";
+import { canOptimize } from "@/lib/can-optimize";
 
 export const metadata: Metadata = {
   title: "Projects · EWB UVM",
@@ -11,25 +13,21 @@ export const metadata: Metadata = {
     "International, domestic, and local engineering projects run by the EWB UVM chapter.",
 };
 
-// Cards show photos ~390px wide, but uploads are often 2400px+. Letting the
-// browser shrink them ~6x on the fly aliases fine detail, so resize through
-// Next's optimizer instead. Only local and Supabase paths are allowlisted
-// (next.config.ts); any other pasted URL renders as-is rather than erroring.
-const canOptimize = (src: string) =>
-  src.startsWith("/") || /^https:\/\/[^/]+\.supabase\.co\//.test(src);
-
 export default async function ProjectsIndex() {
+  const settings = await getSettings();
+  const t = withDefaults(PROJECTS_TEXT, settings.projectsText);
   const projects = (await getProjects())
     .filter((p) => p.published)
     .sort((a, b) => a.order - b.order);
 
   return (
-    <PageShell title="Our work" narrow={false} image="/photos/site/projects-header.jpg">
-      <p className="ewb-lede">
-        From a clean-water pipeline in Rwanda to stormwater work in the
-        Northeast and volunteering across Vermont, every project is designed
-        for community ownership and built to last.
-      </p>
+    <PageShell
+      title={t.title}
+      narrow={false}
+      image={settings.sectionImages?.projectsHeader || "/photos/site/projects-header.jpg"}
+      imageRatio={4 / 3}
+    >
+      <p className="ewb-lede">{t.intro}</p>
 
       <div className="ewb-card-grid">
         {projects.map((p) => (

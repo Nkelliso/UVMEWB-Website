@@ -2,6 +2,7 @@ import "server-only";
 import fs from "fs";
 import path from "path";
 import { readClient, writeClient, isPartiallyConfigured } from "./supabase/server";
+import { recordVersion } from "./history";
 import {
   SEED_SETTINGS,
   SEED_OFFICERS,
@@ -59,18 +60,31 @@ const PARTIAL_CONFIG =
   "fallback. Refusing to write: with a partial config, reads and writes go to " +
   "different places and the change is lost silently.";
 
+/** The built-in default for a key, so the first history entry can capture the
+ *  site as it looked before any admin edit. */
+function seedFor(key: string): unknown {
+  if (key === "settings") return SEED_SETTINGS;
+  if (key === "officers") return SEED_OFFICERS;
+  if (key === "projects") return SEED_PROJECTS;
+  if (key === "sponsors") return SEED_SPONSORS;
+  if (key.startsWith("page:")) return SEED_PAGES[key.slice(5)];
+  return undefined;
+}
+
 export async function setContent<T>(key: string, value: T): Promise<void> {
   if (isPartiallyConfigured()) throw new Error(`[store] ${PARTIAL_CONFIG}`);
+  const previous = await getContent<unknown>(key, seedFor(key)).catch(() => undefined);
   const client = writeClient();
   if (client) {
     const { error } = await client
       .from("content")
       .upsert({ key, value, updated_at: new Date().toISOString() });
     if (error) throw new Error(`[store] write ${key}: ${error.message}`);
-    return;
+  } else {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(filePath(key), JSON.stringify(value, null, 2));
   }
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(filePath(key), JSON.stringify(value, null, 2));
+  await recordVersion(key, value, async () => previous);
 }
 
 /* ── Settings ─────────────────────────────────────────────── */

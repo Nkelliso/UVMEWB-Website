@@ -10,7 +10,7 @@ export default function ContactForm() {
 
   if (state.ok) {
     return (
-      <div className="ewb-note" style={{ fontSize: "1.05rem" }}>
+      <div className="ewb-note" role="status" style={{ fontSize: "1.05rem" }}>
         Thanks, your message is on its way. We&apos;ll be in touch soon.
       </div>
     );
@@ -48,7 +48,7 @@ export default function ContactForm() {
         />
       </div>
       {state.error && (
-        <p className="ewb-note" style={{ color: "var(--gold-ink)" }}>
+        <p className="ewb-note" role="alert" style={{ color: "var(--gold-ink)" }}>
           {state.error}
         </p>
       )}

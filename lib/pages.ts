@@ -67,13 +67,13 @@ export function buildNav(projects: Project[]): NavItem[] {
       label: "About",
       href: p("/about"),
       children: [
-        { label: "About", href: p("/about") },
-        { label: "Mission Statement", href: p("/about/mission-statement") },
-        { label: "Officer Board", href: p("/about/officer-board") },
+        { label: "Our chapter", href: p("/about") },
+        { label: "Mission statement", href: p("/about/mission-statement") },
+        { label: "Officer board", href: p("/about/officer-board") },
       ],
     },
     { label: "Projects", href: p("/projects"), children: projectChildren },
-    { label: "Contact", href: p("/contact") },
+    // No "Contact" link: the header's gold "Get involved" button goes to /contact.
     { label: "Sponsors", href: p("/sponsors") },
   ];
 }

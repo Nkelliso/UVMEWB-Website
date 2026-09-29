@@ -1,3 +1,5 @@
+import type { ContactText, ProjectsText, SponsorsText } from "./page-text";
+
 import type { Data as PuckData } from "@measured/puck";
 
 export type { PuckData };
@@ -56,6 +58,9 @@ export interface Project {
   technicalDrawings?: string[];
   /** Optional interactive 3D models (glTF/GLB) shown in their own section. */
   models?: ProjectModel[];
+  /** Line under the "Explore in 3D" heading. Undefined shows the default
+   *  Kajinge caption; an empty string hides it. */
+  modelsCaption?: string;
   /** Photos for the rotating carousel. Leave undefined to hide the section;
    *  an empty array shows labeled photo slots until photos are added. */
   gallery?: string[];
@@ -111,6 +116,21 @@ export interface SiteSettings {
    *  are set in /admin/photos (sectionImages); the hero uses heroHeading /
    *  heroSubline / heroImages above. */
   home?: HomeCopy;
+  /** People shown under "Contact emails" on the contact page. Blank email
+   *  falls back to the chapter email; blank photo shows their initials. */
+  contactPeople?: ContactPerson[];
+  /** Editable page wording (see lib/page-text.ts). Blank fields use the
+   *  built-in default text. */
+  contactText?: Partial<ContactText>;
+  projectsText?: Partial<ProjectsText>;
+  sponsorsText?: Partial<SponsorsText>;
+}
+
+export interface ContactPerson {
+  name: string;
+  role: string;
+  email?: string;
+  photo?: string;
 }
 
 /** Text for the homepage's scrolling sections (see SiteSettings.home). */
