@@ -2573,8 +2573,8 @@ body {
   display: none;
 }
 .imm-header-inner {
-  min-height: clamp(6rem, 8vw, 8rem);
-  padding: 1.5rem clamp(1.25rem, 5.8vw, 7rem);
+  min-height: clamp(5rem, 6vw, 6rem);
+  padding: 1.1rem clamp(1.25rem, 5.8vw, 7rem);
   gap: 2rem;
 }
 .imm-brand {
@@ -2588,12 +2588,12 @@ body {
 }
 .imm-brand-logo {
   /* Original EWB chapter lockup, enlarged without changing the artwork. */
-  width: clamp(14rem, 24vw, 20rem);
+  width: clamp(13rem, 20vw, 16rem);
   height: auto;
   max-width: calc(100vw - 6.5rem);
 }
 .imm-nav {
-  gap: clamp(1.1rem, 2.2vw, 2.75rem);
+  gap: clamp(1rem, 1.8vw, 2.15rem);
 }
 .imm-nav-link,
 .imm-nav-cta {
@@ -2602,7 +2602,7 @@ body {
   min-height: 44px;
   padding: 0.55rem 0;
   font-family: var(--masthead-font);
-  font-size: clamp(0.75rem, 0.83vw, 0.9rem);
+  font-size: clamp(0.7rem, 0.75vw, 0.8rem);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0.16em;
@@ -2612,13 +2612,13 @@ body {
 }
 .imm-nav-cta {
   justify-content: center;
-  min-height: 54px;
-  padding: 0.85rem 1.25rem;
+  min-height: 44px;
+  padding: 0.6rem 0.95rem;
   border: 0;
   border-radius: 4px;
   background: var(--gold);
   color: var(--ink);
-  font-size: 1.15rem;
+  font-size: 0.9rem;
   letter-spacing: 0;
   text-transform: none;
   transition: background var(--dur) var(--ease-out);
@@ -2670,7 +2670,7 @@ body {
 }
 
 @media (max-width: 1000px) {
-  .imm-header-inner { min-height: 6rem; padding: 1.25rem; gap: 1rem; }
+  .imm-header-inner { min-height: 5.25rem; padding: 1rem 1.25rem; gap: 1rem; }
   .imm-brand { font-size: clamp(1.65rem, 4.5vw, 2.25rem); letter-spacing: 0.14em; }
   .imm-burger { display: flex; flex-shrink: 0; }
   .imm-header[data-menu-open="true"] { background: var(--green-deep); }
@@ -2708,7 +2708,7 @@ body {
   .imm-dropdown-link { padding: 0.75rem; color: var(--chalk); font-size: 0.9rem; }
   .imm-dropdown-link:hover,
   .imm-dropdown-link[data-active="true"] { background: var(--masthead-hover); color: var(--chalk); }
-  .imm-nav-cta { margin-top: 1rem; padding: 0.85rem 1.25rem; text-align: center; font-size: 1.15rem; align-self: flex-start; }
+  .imm-nav-cta { margin-top: 1rem; padding: 0.7rem 1.1rem; text-align: center; font-size: 1.05rem; align-self: flex-start; }
 }
 
 /* Full-screen photo openings — UVM SSC reference, 2026-10-26.
@@ -2780,3 +2780,20 @@ body {
 .proj-image-caption a { display: inline-block; color: var(--green-deep); text-decoration: underline; text-underline-offset: 0.2em; }
 .proj-image-caption a:hover { color: var(--ink); }
 .proj-image-caption a:focus-visible { outline: 2px solid var(--green-deep); outline-offset: 3px; }
+
+/* Match the restored people layer to the full-screen, unbled hero photo. */
+.theme-immersive .imm-poster.is-hero.has-depth .imm-poster-fg {
+  inset: 0;
+}
+.theme-immersive .imm-poster.is-hero.has-depth .imm-poster-fg-scrim {
+  background: var(--poster-scrim);
+}
+.theme-immersive .imm-poster.is-hero.has-depth .imm-poster-title {
+  position: relative;
+  inset: auto;
+}
+@media (min-width: 761px) {
+  .theme-immersive .ewb-home .imm-poster.is-hero.has-depth .imm-poster-title {
+    top: -0.65em;
+  }
+}

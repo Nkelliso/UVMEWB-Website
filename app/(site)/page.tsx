@@ -1,6 +1,7 @@
 import PosterSection from "@/components/immersive/PosterSection";
 import { getSettings } from "@/lib/store";
 import { HOME_COPY } from "@/lib/home-copy";
+import { HERO_CUTOUTS } from "@/lib/hero-cutouts";
 
 const BASE = "";
 
@@ -28,13 +29,14 @@ export default async function ImmersiveHome() {
   const heroImage = settings.heroImages?.[0] || "/photos/hero.jpg";
 
   return (
-    <>
+    <div className="ewb-home">
       <link rel="preload" as="image" href={heroImage} fetchPriority="high" />
       <PosterSection
         variant="hero"
         parallaxStrength={0}
         warm
         image={heroImage}
+        foreground={HERO_CUTOUTS[heroImage]}
         title={settings.heroHeading}
         titleSuffix={
           <>
@@ -83,6 +85,6 @@ export default async function ImmersiveHome() {
           { label: "Get in touch", href: `${BASE}/contact`, variant: "gold" },
         ]}
       />
-    </>
+    </div>
   );
 }
