@@ -144,11 +144,17 @@ export default function ProjectsForm({ initial }: { initial: Project[] }) {
                 <Section title="The basics">
                   <Field
                     label="Project name"
-                    hint="The big title on the project's page and its card."
+                    hint="The big title on the project's page. Also used on its card unless you set a separate card title."
                     value={p.title}
                     onChange={(v) =>
                       upd(i, isNew ? { title: v, slug: slugify(v) || "new-project" } : { title: v })
                     }
+                  />
+                  <Field
+                    label="Card title (optional)"
+                    hint="Use a different title on the Projects overview. Leave blank to use the project name."
+                    value={p.cardTitle ?? ""}
+                    onChange={(v) => upd(i, { cardTitle: v || undefined })}
                   />
                   <Field
                     label="Short description"
@@ -254,6 +260,8 @@ export default function ProjectsForm({ initial }: { initial: Project[] }) {
                         value={sec.image ?? ""}
                         onChange={(v) => updSection(i, si, { image: v })}
                       />
+                      <Field label="Image description (for screen readers)" value={sec.imageAlt ?? ""} onChange={(v) => updSection(i, si, { imageAlt: v })} />
+                      <Field label="Image caption (optional)" value={sec.imageCaption ?? ""} onChange={(v) => updSection(i, si, { imageCaption: v })} />
                     </Card>
                   ))}
                   <AddButton

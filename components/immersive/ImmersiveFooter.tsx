@@ -1,4 +1,5 @@
 import type { SiteSettings } from "@/lib/types";
+import { safeHref } from "@/components/FormattedText";
 
 /**
  * Immersive-route footer. Layout modeled on the EWB-Cornell footer — chapter
@@ -17,7 +18,8 @@ export default function ImmersiveFooter({
   const year = new Date().getFullYear();
 
   const socials: { key: string; href: string; label: string; icon: React.ReactNode }[] = [];
-  if (settings.instagram)
+  // Links are typed in /admin; anything that isn't a normal web link is skipped.
+  if (settings.instagram && safeHref(settings.instagram))
     socials.push({ key: "ig", href: settings.instagram, label: "Instagram", icon: <IgIcon /> });
   if (settings.facebook)
     socials.push({ key: "fb", href: settings.facebook, label: "Facebook", icon: <FbIcon /> });

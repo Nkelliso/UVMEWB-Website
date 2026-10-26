@@ -46,7 +46,9 @@ export default async function LoginPage({
           </button>
           {error && (
             <p className="ewb-note" style={{ color: "var(--gold)" }}>
-              Wrong password.
+              {error === "locked"
+                ? "Too many wrong passwords. Wait 15 minutes, then try again."
+                : "Wrong password."}
             </p>
           )}
         </form>

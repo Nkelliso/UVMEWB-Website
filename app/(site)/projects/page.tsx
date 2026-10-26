@@ -40,7 +40,7 @@ export default async function ProjectsIndex() {
               <div style={{ position: "relative", height: "11rem" }}>
                 <Image
                   src={p.heroImage}
-                  alt={p.title}
+                  alt={p.cardTitle || p.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
                   unoptimized={!canOptimize(p.heroImage)}
@@ -52,10 +52,10 @@ export default async function ProjectsIndex() {
             )}
             <div className="ewb-project-card-body">
               {p.status &&
-                p.status.toLowerCase() !== p.title.toLowerCase() && (
+                p.status.toLowerCase() !== (p.cardTitle || p.title).toLowerCase() && (
                   <span className="ewb-tag">{p.status}</span>
                 )}
-              <h3>{p.title}</h3>
+              <h3>{p.cardTitle || p.title}</h3>
               <p>{p.summary}</p>
               <span className="ewb-project-more">
                 View project <span aria-hidden>→</span>

@@ -1,7 +1,6 @@
 import PosterSection from "@/components/immersive/PosterSection";
 import { getSettings } from "@/lib/store";
 import { HOME_COPY } from "@/lib/home-copy";
-import { HERO_CUTOUTS } from "@/lib/hero-cutouts";
 
 const BASE = "";
 
@@ -33,10 +32,9 @@ export default async function ImmersiveHome() {
       <link rel="preload" as="image" href={heroImage} fetchPriority="high" />
       <PosterSection
         variant="hero"
+        parallaxStrength={0}
         warm
-        parallaxStrength={STRENGTH}
         image={heroImage}
-        foreground={HERO_CUTOUTS[heroImage]}
         title={settings.heroHeading}
         titleSuffix={
           <>

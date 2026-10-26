@@ -32,6 +32,9 @@ export interface ProjectSection {
   body: string;
   /** Optional photo shown beside this section in the alternating layout. */
   image?: string;
+  /** Accessible description and visible context for section imagery. */
+  imageAlt?: string;
+  imageCaption?: string;
   /** Date or term label ("Spring 2024") shown on the timeline layout. */
   date?: string;
 }
@@ -39,6 +42,8 @@ export interface ProjectSection {
 export interface Project {
   slug: string;
   title: string;
+  /** Optional title used only on the Projects overview card. */
+  cardTitle?: string;
   eyebrow: string;
   location: string;
   status: string;

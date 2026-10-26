@@ -100,8 +100,10 @@ export const SEED_PROJECTS: Project[] = [
       },
       {
         heading: "Our solution",
-        image: "/photos/site/rwanda-pipes.jpg",
-        body: "We're designing a 700-meter replacement pipeline with a chlorination system at the source, buried one meter deep. The design reuses existing infrastructure where possible. We're targeting implementation in December 2027.",
+        image: "/photos/site/kajinge-upper-plan-2026-10-19.webp",
+        imageAlt: "Draft plan of the Kajinge spring, stream crossing, collection chamber and chlorination box, with site photographs",
+        imageCaption: "Proposed upper-system layout, sheet A1.2. October 2026 draft; design review is ongoing.",
+        body: "We're working with IDA Rwanda, our in-country NGO partner, and community members in Kajinge to design a gravity-fed water distribution and chlorination system.\n\nPhase 1 would capture and treat spring water, then supply a 30 m³ head tank and the first community tap stand. Phase 2 would extend the system to a 10 m³ school tank serving the school's kitchen and tap stands, and Kajinge Health Post. The project is still in design.\n\nWe're always looking for more students to help think critically about this solution. Technical and nontechnical majors are welcome; this project needs an interdisciplinary approach.",
       },
       {
         heading: "Community ownership",
@@ -184,10 +186,11 @@ export const SEED_PROJECTS: Project[] = [
   },
   {
     slug: "local-volunteering",
-    title: "Greater Burlington Area",
+    title: "Around Vermont",
+    cardTitle: "Greater Burlington Area",
     eyebrow: "Local Volunteering",
     location: "",
-    status: "Greater Burlington area",
+    status: "Active",
     navLabel: "Local Volunteering",
     summary:
       "Hands-on service with community organizations across Vermont.",

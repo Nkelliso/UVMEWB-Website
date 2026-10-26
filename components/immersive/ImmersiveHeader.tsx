@@ -5,24 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavItem } from "@/lib/pages";
 
-/**
- * Immersive-route masthead. Transparent white-on-photo over the home hero,
- * collapses to a solid dark bar on scroll. Sentence-case bold links, a paper
- * dropdown card, and a gold "Get involved" button
- * (chosen 2026-09-29 from the nav-lab comparison, variation 1).
- * All hrefs arrive already prefixed with /immersive from the layout.
- *
- * Accessibility: submenus open on hover (mouse), on the caret toggle (touch +
- * keyboard, with aria-expanded), and close on Escape / outside-click. Below the
- * collapse breakpoint the nav becomes a full drawer behind a hamburger button,
- * and the dropdowns expand inline as accordions.
+/** A photo-overlay masthead that stays at the start of the document.
+ * Desktop dropdowns support hover, disclosure buttons, and keyboard focus.
+ * On smaller screens the menu expands below the header and scrolls with it.
+ * Reference: the spacious wordmark/navigation on uvmssc.org (2026-10-26).
  */
-// The default /logo.png is a padded raster that blurs at header size; /logo.svg
-// is the same artwork traced to vectors and trimmed. Swapped here (not in data)
-// so saved settings pointing at /logo.png still get the sharp version. A logo
-// uploaded through /admin is used as-is.
-const crispLogo = (url: string) => (url === "/logo.png" ? "/logo.svg" : url);
-
 export default function ImmersiveHeader({
   nav,
   brand,
@@ -35,110 +22,80 @@ export default function ImmersiveHeader({
   logoUrl?: string;
 }) {
   const pathname = usePathname();
-  const [hidden, setHidden] = useState(false);
-  const [overDark, setOverDark] = useState(true); // corrected on mount by measuring the top band
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const lastY = useRef(0);
+  const [menuPath, setMenuPath] = useState(pathname);
   const headerRef = useRef<HTMLElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    // Transparent while the page's opening photo band is still behind the header,
-    // then solid (deep green) once you scroll past it. Works on every immersive
-    // page — the full-height home hero or a shorter interior header — by measuring
-    // the first photo band inside <main>.
-    const measureBand = () => {
-      const band = document.querySelector(
-        "main .imm-poster, main .ewb-shell-head"
-      ) as HTMLElement | null;
-      return band ? band.offsetHeight : 0;
-    };
-    let bandH = measureBand();
-
-    const apply = () => {
-      const y = window.scrollY;
-      const goingDown = y > lastY.current;
-      if (y < 80) setHidden(false);
-      else if (goingDown && y > 200) setHidden(true);
-      else if (!goingDown) setHidden(false);
-      lastY.current = y;
-
-      const headerH = headerRef.current?.offsetHeight ?? 72;
-      setOverDark(bandH > 0 && y < bandH - headerH);
-    };
-    const onResize = () => {
-      bandH = measureBand();
-      apply();
-    };
-
-    apply();
-    window.addEventListener("scroll", apply, { passive: true });
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("scroll", apply);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [pathname]);
-
-  // Close everything on route change.
-  useEffect(() => {
+  // Reset disclosure state when navigation changes the route, including Back.
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
     setMenuOpen(false);
     setOpenIdx(null);
-  }, [pathname]);
+  }
 
-  // Escape closes; outside-click closes.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setOpenIdx(null); setMenuOpen(false); }
+    const close = () => { setOpenIdx(null); setMenuOpen(false); };
+    const onDown = (event: PointerEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node)) close();
     };
-    const onDown = (e: MouseEvent) => {
-      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
-        setOpenIdx(null);
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("mousedown", onDown);
+    const breakpoint = window.matchMedia("(max-width: 1000px)");
+    document.addEventListener("pointerdown", onDown);
+    breakpoint.addEventListener("change", close);
     return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("pointerdown", onDown);
+      breakpoint.removeEventListener("change", close);
     };
   }, []);
 
+  const isDesktop = () => window.matchMedia("(min-width: 1001px)").matches;
   const isActive = (href: string) =>
     href === homeHref ? pathname === homeHref : pathname.startsWith(href);
+  const close = () => { setOpenIdx(null); setMenuOpen(false); };
+  // Preserve the official chapter lockup. The SVG is the same artwork,
+  // trimmed to its bounds so it stays sharp and readable at larger sizes.
+  const chapterLogo = !logoUrl || logoUrl === "/logo.png" ? "/logo.svg" : logoUrl;
 
   return (
     <header
       ref={headerRef}
       className="imm-header"
-      data-hidden={hidden}
-      data-over-dark={overDark && !menuOpen}
+      data-over-dark="true"
       data-menu-open={menuOpen}
-      onMouseLeave={() => setOpenIdx(null)}
+      onMouseLeave={() => { if (isDesktop()) setOpenIdx(null); }}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close();
+      }}
+      onKeyDown={(event) => {
+        if (event.key !== "Escape") return;
+        event.preventDefault();
+        if (menuOpen) burgerRef.current?.focus();
+        else if (openIdx !== null) {
+          headerRef.current?.querySelector<HTMLButtonElement>(`[aria-controls="imm-sub-${openIdx}"]`)?.focus();
+        }
+        close();
+      }}
     >
       <div className="imm-header-inner">
-        <Link href={homeHref} className="imm-brand" aria-label={`${brand} home`}>
-          {logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={crispLogo(logoUrl)} alt={brand} className="imm-brand-logo" />
-          ) : (
-            <>EWB<small>UVM</small></>
-          )}
+        <Link href={homeHref} className="imm-brand" aria-label={`${brand} home`} onClick={close}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={chapterLogo} alt={brand} className="imm-brand-logo" />
         </Link>
 
         <button
+          ref={burgerRef}
           type="button"
           className="imm-burger"
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="imm-nav"
-          onClick={() => setMenuOpen((v) => !v)}
+          onClick={() => { setMenuOpen((value) => !value); setOpenIdx(null); }}
         >
           <span /><span /><span />
         </button>
 
-        <nav id="imm-nav" className="imm-nav" data-open={menuOpen}>
+        <nav id="imm-nav" className="imm-nav" aria-label="Main navigation" data-open={menuOpen}>
           {nav.map((item, i) => {
             const hasChildren = !!item.children?.length;
             const isOpen = openIdx === i;
@@ -146,15 +103,24 @@ export default function ImmersiveHeader({
               <div
                 key={item.label}
                 className="imm-nav-item"
-                // Hovering an item without a menu closes whichever one is open.
-                onMouseEnter={() => setOpenIdx(hasChildren ? i : null)}
+                onMouseEnter={() => { if (isDesktop()) setOpenIdx(hasChildren ? i : null); }}
               >
                 <div className="imm-nav-row">
                   <Link
                     href={item.href}
                     className="imm-nav-link"
                     data-active={isActive(item.href) ? "true" : undefined}
-                    onClick={() => { setOpenIdx(null); setMenuOpen(false); }}
+                    aria-current={pathname === item.href ? "page" : undefined}
+                    onFocus={() => { if (isDesktop()) setOpenIdx(hasChildren ? i : null); }}
+                    onKeyDown={(event) => {
+                      if (event.key !== "ArrowDown" || !hasChildren) return;
+                      event.preventDefault();
+                      setOpenIdx(i);
+                      requestAnimationFrame(() => {
+                        headerRef.current?.querySelector<HTMLAnchorElement>(`#imm-sub-${i} a`)?.focus();
+                      });
+                    }}
+                    onClick={close}
                   >
                     {item.label}
                   </Link>
@@ -168,29 +134,25 @@ export default function ImmersiveHeader({
                       data-open={isOpen}
                       onClick={() => setOpenIdx(isOpen ? null : i)}
                     >
-                      <span aria-hidden>▾</span>
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                        <path d="m1 1 4 4 4-4" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
                     </button>
                   )}
                 </div>
                 {hasChildren && (
-                  <div
-                    id={`imm-sub-${i}`}
-                    className="imm-dropdown"
-                    data-open={isOpen}
-                    role="menu"
-                    aria-label={item.label}
-                  >
+                  <div id={`imm-sub-${i}`} className="imm-dropdown" data-open={isOpen}>
                     <div className="imm-dropdown-inner">
-                      {item.children!.map((c) => (
+                      {item.children!.map((child) => (
                         <Link
-                          key={c.href}
-                          href={c.href}
+                          key={child.href}
+                          href={child.href}
                           className="imm-dropdown-link"
-                          role="menuitem"
-                          data-active={pathname === c.href ? "true" : undefined}
-                          onClick={() => { setOpenIdx(null); setMenuOpen(false); }}
+                          data-active={pathname === child.href ? "true" : undefined}
+                          aria-current={pathname === child.href ? "page" : undefined}
+                          onClick={close}
                         >
-                          {c.label}
+                          {child.label}
                         </Link>
                       ))}
                     </div>
@@ -199,14 +161,13 @@ export default function ImmersiveHeader({
               </div>
             );
           })}
-          {/* Primary action, and the only way into /contact from the nav (the
-              Contact link was folded into it). */}
           <Link
             href="/contact"
             className="imm-nav-cta"
-            onMouseEnter={() => setOpenIdx(null)}
-            aria-current={pathname.startsWith("/contact") ? "page" : undefined}
-            onClick={() => { setOpenIdx(null); setMenuOpen(false); }}
+            onMouseEnter={() => { if (isDesktop()) setOpenIdx(null); }}
+            onFocus={() => setOpenIdx(null)}
+            aria-current={pathname === "/contact" ? "page" : undefined}
+            onClick={close}
           >
             Get involved
           </Link>

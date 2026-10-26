@@ -1,13 +1,36 @@
 "use server";
 
+import { createHash, timingSafeEqual } from "crypto";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { addContactSubmission, getSettings } from "@/lib/store";
 import { sessionToken } from "@/lib/auth";
 
+// Brute-force brake for the shared admin password: 5 wrong tries per IP per 15
+// minutes. In-memory like the form limiter below (per server instance), so it
+// slows guessing rather than hard-blocking it.
+const LOGIN_FAILS = 5;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const loginFails = new Map<string, number[]>();
+
+function samePassword(given: string, expected: string): boolean {
+  // Compare fixed-length digests so the check takes the same time either way.
+  const a = createHash("sha256").update(given).digest();
+  const b = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(a, b);
+}
+
 export async function login(formData: FormData) {
   const password = formData.get("password") as string;
-  if (password && password === process.env.ADMIN_PASSWORD) {
+  const h = await headers();
+  const ip = h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
+  const now = Date.now();
+  const recent = (loginFails.get(ip) ?? []).filter((t) => now - t < LOGIN_WINDOW_MS);
+  if (recent.length >= LOGIN_FAILS) redirect("/login?error=locked");
+
+  const expected = process.env.ADMIN_PASSWORD;
+  if (password && expected && samePassword(password, expected)) {
+    loginFails.delete(ip);
     const store = await cookies();
     store.set("ewb_auth", sessionToken(), {
       httpOnly: true,
@@ -17,6 +40,7 @@ export async function login(formData: FormData) {
     });
     redirect("/admin");
   }
+  loginFails.set(ip, [...recent, now]);
   redirect("/login?error=1");
 }
 

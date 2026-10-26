@@ -97,6 +97,7 @@ export default async function SponsorsPage() {
                         alt={w.title}
                         fill
                         sizes="(max-width: 760px) 100vw, 33vw"
+                        quality={90}
                         unoptimized={!canOptimize(w.image)}
                         style={{ objectFit: "cover", filter: DEFAULT_PHOTO_FILTERS[w.image] }}
                       />

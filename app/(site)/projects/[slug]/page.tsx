@@ -5,6 +5,7 @@ import { getProject } from "@/lib/store";
 import ModelViewer from "@/components/ModelViewer";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import Placeholder from "@/components/Placeholder";
+import { safeHref } from "@/components/FormattedText";
 import { DEFAULT_MODELS_CAPTION } from "@/lib/project-defaults";
 
 // No generateStaticParams: project content is CMS-backed and edited at runtime
@@ -58,7 +59,9 @@ export default async function ProjectDetail({
                 <li key={`${s.heading}-${i}`} className="proj-timeline-item">
                   {s.date && <p className="proj-timeline-date">{s.date}</p>}
                   <h2 className="proj-timeline-heading">{s.heading}</h2>
-                  <p className="proj-section-body">{s.body}</p>
+                  {s.body.split(/\n\s*\n/).map((paragraph, pi) => (
+                    <p key={pi} className="proj-section-body">{paragraph}</p>
+                  ))}
                   {s.image && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -75,6 +78,7 @@ export default async function ProjectDetail({
         ) : (
           project.sections.map((s, i) => {
             const media = s.image || project.photoSlots;
+            const imageHref = safeHref(s.image || "");
             return (
               <section
                 key={`${s.heading}-${i}`}
@@ -84,13 +88,23 @@ export default async function ProjectDetail({
               >
                 <div className="proj-section-text">
                   <h2 className="proj-section-heading">{s.heading}</h2>
-                  <p className="proj-section-body">{s.body}</p>
+                  {s.body.split(/\n\s*\n/).map((paragraph, pi) => (
+                    <p key={pi} className="proj-section-body">{paragraph}</p>
+                  ))}
                 </div>
                 {media && (
                   <div className="proj-section-media">
                     {s.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={s.image} alt={s.heading} loading="lazy" />
+                      <figure>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={s.image} alt={s.imageAlt || s.heading} loading="lazy" />
+                        {s.imageCaption && (
+                          <figcaption className="proj-image-caption">
+                            {s.imageCaption}{" "}
+                            {imageHref && <a href={imageHref} target="_blank" rel="noreferrer">View full-size image</a>}
+                          </figcaption>
+                        )}
+                      </figure>
                     ) : (
                       <Placeholder label={`${s.heading} photo coming soon`} height="22rem" />
                     )}
@@ -110,11 +124,10 @@ export default async function ProjectDetail({
 
         {project.technicalDrawings && project.technicalDrawings.length > 0 && (
           <section className="proj-tech">
-            <h2 className="proj-section-heading">Technical drawings</h2>
             <div className="proj-tech-grid">
               {project.technicalDrawings.map((src, i) => (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={i} src={src} alt="Technical drawing" loading="lazy" />
+                <img key={i} src={src} alt={src === "/photos/site/rwanda-map.jpg" ? "Map of Rwanda painted on a school wall" : "Technical drawing"} loading="lazy" />
               ))}
             </div>
           </section>

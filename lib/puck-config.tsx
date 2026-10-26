@@ -1,10 +1,17 @@
-import { type Config } from "@measured/puck";
+import { FieldLabel, type Config, type CustomField } from "@measured/puck";
 import WorldMap from "@/components/WorldMap";
 import Placeholder from "@/components/Placeholder";
+import FormattedText, { safeHref } from "@/components/FormattedText";
+import FormattedTextField from "@/components/admin/FormattedTextField";
+import { ImageField } from "@/components/admin/ImageField";
 
+// Block names (SectionIntro, RichText, ImageBand, …) are stored in saved page
+// data, so they stay fixed; only the labels officers see are friendly.
 type Components = {
   SectionIntro: {
-    eyebrow: string;
+    /** Gold eyebrow labels were removed site-wide (2026-09-29). Old saved
+     *  pages may still carry a value; it's ignored. */
+    eyebrow?: string;
     heading: string;
     body: string;
     primaryLabel: string;
@@ -15,7 +22,7 @@ type Components = {
   RichText: { heading: string; body: string };
   StatStrip: { items: { value: string; label: string }[] };
   WorldMapBlock: Record<string, never>;
-  ImageBand: { caption: string; height: string };
+  ImageBand: { image?: string; alt?: string; caption: string; height: string };
   CTABand: {
     heading: string;
     body: string;
@@ -26,21 +33,45 @@ type Components = {
   Spacer: { size: string };
 };
 
+/** A text box with Bold / Italic / Link / Bullet list buttons. */
+function formattedField(label: string, rows = 5): CustomField<string> {
+  return {
+    type: "custom",
+    label,
+    render: ({ value, onChange, readOnly }) => (
+      <FieldLabel label={label} el="div" readOnly={readOnly}>
+        <FormattedTextField value={value} onChange={onChange} rows={rows} readOnly={readOnly} />
+      </FieldLabel>
+    ),
+  };
+}
+
+/** The same upload / choose-a-photo picker used everywhere else in the admin. */
+const photoField: CustomField<string | undefined> = {
+  type: "custom",
+  label: "Photo",
+  render: ({ value, onChange }) => (
+    <ImageField label="Photo" value={value ?? ""} onChange={(v) => onChange(v)} />
+  ),
+};
+
+const linkHint = "(for example /contact or https://…)";
+
 export const puckConfig: Config<Components> = {
+  // The page itself has no settings to fill in (hides Puck's default "title").
+  root: { fields: {} },
   components: {
     SectionIntro: {
-      label: "Section (eyebrow + heading + text)",
+      label: "Section: heading, text, and buttons",
       fields: {
-        eyebrow: { type: "text" },
-        heading: { type: "textarea" },
-        body: { type: "textarea" },
-        primaryLabel: { type: "text" },
-        primaryHref: { type: "text" },
-        secondaryLabel: { type: "text" },
-        secondaryHref: { type: "text" },
+        heading: { type: "textarea", label: "Heading" },
+        body: formattedField("Text"),
+        primaryLabel: { type: "text", label: "Main button text (leave blank for no button)" },
+        primaryHref: { type: "text", label: `Main button link ${linkHint}` },
+        secondaryLabel: { type: "text", label: "Second button text (optional)" },
+        secondaryHref: { type: "text", label: `Second button link ${linkHint}` },
       },
       defaultProps: {
-        eyebrow: "Who we are",
         heading: "A short, human headline about this section.",
         body: "A paragraph of supporting text. Say what matters in plain language.",
         primaryLabel: "Learn more",
@@ -58,21 +89,19 @@ export const puckConfig: Config<Components> = {
       }) => (
         <section className="ewb-section is-bordered">
           <div className="ewb-split">
-            {/* Gold eyebrow labels removed site-wide (2026-09-29); the field is
-                kept so saved page data still validates. */}
             <div className="ewb-split-aside" />
             <div className="ewb-split-main">
               <h2 className="ewb-display">{heading}</h2>
-              {body && <p>{body}</p>}
+              <FormattedText text={body} />
               {(primaryLabel || secondaryLabel) && (
                 <div className="ewb-actions">
                   {primaryLabel && (
-                    <a className="ewb-btn ewb-btn-primary" href={primaryHref || "#"}>
+                    <a className="ewb-btn ewb-btn-primary" href={safeHref(primaryHref) ?? "#"}>
                       {primaryLabel} <span aria-hidden>→</span>
                     </a>
                   )}
                   {secondaryLabel && (
-                    <a className="ewb-btn ewb-btn-ghost" href={secondaryHref || "#"}>
+                    <a className="ewb-btn ewb-btn-ghost" href={safeHref(secondaryHref) ?? "#"}>
                       {secondaryLabel} <span aria-hidden>→</span>
                     </a>
                   )}
@@ -85,10 +114,10 @@ export const puckConfig: Config<Components> = {
     },
 
     RichText: {
-      label: "Text block",
+      label: "Text",
       fields: {
-        heading: { type: "text" },
-        body: { type: "textarea" },
+        heading: { type: "text", label: "Heading (optional)" },
+        body: formattedField("Text", 8),
       },
       defaultProps: {
         heading: "Heading",
@@ -98,23 +127,24 @@ export const puckConfig: Config<Components> = {
         <section className="ewb-shell-body">
           <div className="ewb-wrap-narrow">
             {heading && <h2>{heading}</h2>}
-            {body && <p>{body}</p>}
+            <FormattedText text={body} />
           </div>
         </section>
       ),
     },
 
     StatStrip: {
-      label: "Stat strip",
+      label: "Numbers in a row",
       fields: {
         items: {
           type: "array",
+          label: "Numbers",
           arrayFields: {
-            value: { type: "text" },
-            label: { type: "text" },
+            value: { type: "text", label: "Number (for example 700m)" },
+            label: { type: "text", label: "What it counts" },
           },
           defaultItemProps: { value: "100+", label: "Label" },
-          getItemSummary: (item) => item.label || "Stat",
+          getItemSummary: (item) => item.label || "Number",
         },
       },
       defaultProps: {
@@ -156,42 +186,74 @@ export const puckConfig: Config<Components> = {
     },
 
     ImageBand: {
-      label: "Image band (placeholder)",
+      label: "Photo",
       fields: {
-        caption: { type: "text" },
+        image: photoField,
+        alt: { type: "text", label: "Describe the photo in a few words (read aloud to people using screen readers)" },
+        caption: { type: "text", label: "Caption under the photo (optional)" },
         height: {
           type: "select",
+          label: "Height",
           options: [
             { label: "Short", value: "12rem" },
             { label: "Medium", value: "18rem" },
             { label: "Tall", value: "26rem" },
+            { label: "Show the whole photo (no cropping)", value: "auto" },
           ],
         },
       },
       defaultProps: {
-        caption: "Placeholder photo — replace via /admin",
+        image: "",
+        alt: "",
+        caption: "",
         height: "18rem",
       },
-      render: ({ caption, height }) => (
+      render: ({ image, alt, caption, height }) => (
         <section className="ewb-shell-body">
           <div className="ewb-wrap">
-            <Placeholder label={caption} height={height} />
+            {image ? (
+              <figure style={{ margin: 0 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={image}
+                  alt={alt || caption || ""}
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    height: height === "auto" ? "auto" : height,
+                    objectFit: "cover",
+                    borderRadius: "var(--radius)",
+                    display: "block",
+                  }}
+                />
+                {caption && (
+                  <figcaption className="ewb-note" style={{ marginTop: "0.6rem" }}>
+                    {caption}
+                  </figcaption>
+                )}
+              </figure>
+            ) : (
+              <Placeholder
+                label={caption || "Choose a photo for this block"}
+                height={height === "auto" ? "18rem" : height}
+              />
+            )}
           </div>
         </section>
       ),
     },
 
     CTABand: {
-      label: "Call to action band",
+      label: "Green band with a button",
       fields: {
-        heading: { type: "text" },
-        body: { type: "textarea" },
-        buttonLabel: { type: "text" },
-        buttonHref: { type: "text" },
+        heading: { type: "text", label: "Heading" },
+        body: formattedField("Text", 3),
+        buttonLabel: { type: "text", label: "Button text (leave blank for no button)" },
+        buttonHref: { type: "text", label: `Button link ${linkHint}` },
       },
       defaultProps: {
         heading: "Build something that lasts.",
-        body: "Whether you want to join, partner, or support a project — we'd love to hear from you.",
+        body: "Whether you want to join, partner, or support a project, we'd love to hear from you.",
         buttonLabel: "Get in touch",
         buttonHref: "/contact",
       },
@@ -199,9 +261,9 @@ export const puckConfig: Config<Components> = {
         <section className="ewb-cta">
           <div className="ewb-wrap">
             <h2>{heading}</h2>
-            {body && <p>{body}</p>}
+            <FormattedText text={body} />
             {buttonLabel && (
-              <a className="ewb-btn ewb-btn-gold" href={buttonHref || "#"}>
+              <a className="ewb-btn ewb-btn-gold" href={safeHref(buttonHref) ?? "#"}>
                 {buttonLabel} <span aria-hidden>→</span>
               </a>
             )}
@@ -211,7 +273,7 @@ export const puckConfig: Config<Components> = {
     },
 
     Divider: {
-      label: "Divider",
+      label: "Divider line",
       fields: {},
       render: () => (
         <div className="ewb-wrap">
@@ -221,10 +283,11 @@ export const puckConfig: Config<Components> = {
     },
 
     Spacer: {
-      label: "Spacer",
+      label: "Empty space",
       fields: {
         size: {
           type: "select",
+          label: "How much space",
           options: [
             { label: "Small", value: "s" },
             { label: "Medium", value: "m" },

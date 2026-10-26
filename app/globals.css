@@ -2528,3 +2528,255 @@ body {
   font-family: var(--font-headline);
   letter-spacing: 0.03em;
 }
+
+/* ─────────────────────────────  formatted text (page editor)  ───────────── */
+/* Lists and links written with the page editor's toolbar
+   (components/FormattedText.tsx). The CSS reset strips list bullets, so they're
+   put back here. */
+.ewb-rich-list {
+  list-style: disc;
+  padding-left: 1.4em;
+  margin-top: var(--space-sm);
+}
+.ewb-rich-list li + li {
+  margin-top: 0.35em;
+}
+.ewb-rich-link {
+  color: var(--green-deep);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.ewb-cta .ewb-rich-link {
+  color: inherit;
+}
+
+/* Hallmark · component: masthead · theme: existing EWB / UVM SSC reference
+ * pre-emit critique: P5 H5 E4 S5 R5 V4
+ * 2026-10-26: bold chapter wordmark, spaced links, document-bound navigation.
+ * Scoped override preserves the existing global stylesheet and hero design.
+ */
+.theme-immersive {
+  position: relative;
+  --masthead-font: var(--font-button), sans-serif;
+  --masthead-shadow: 0 12px 24px oklch(0% 0 0 / 0.16);
+  --masthead-hover: oklch(100% 0 0 / 0.08);
+}
+.imm-header {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  transform: none;
+  transition: none;
+}
+/* Keep the photo uninterrupted behind the navigation. */
+.imm-header[data-over-dark="true"]::before {
+  display: none;
+}
+.imm-header-inner {
+  min-height: clamp(6rem, 8vw, 8rem);
+  padding: 1.5rem clamp(1.25rem, 5.8vw, 7rem);
+  gap: 2rem;
+}
+.imm-brand {
+  flex-shrink: 0;
+  align-items: center;
+  font-family: var(--masthead-font);
+  font-size: clamp(1.75rem, 2.6vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  line-height: 1.15;
+}
+.imm-brand-logo {
+  /* Original EWB chapter lockup, enlarged without changing the artwork. */
+  width: clamp(14rem, 24vw, 20rem);
+  height: auto;
+  max-width: calc(100vw - 6.5rem);
+}
+.imm-nav {
+  gap: clamp(1.1rem, 2.2vw, 2.75rem);
+}
+.imm-nav-link,
+.imm-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.55rem 0;
+  font-family: var(--masthead-font);
+  font-size: clamp(0.75rem, 0.83vw, 0.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 0;
+}
+.imm-nav-cta {
+  justify-content: center;
+  min-height: 54px;
+  padding: 0.85rem 1.25rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 1.15rem;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: background var(--dur) var(--ease-out);
+}
+.imm-nav-cta[aria-current="page"] {
+  background: var(--gold);
+  color: var(--ink);
+}
+.imm-nav-cta:hover {
+  background: var(--gold-deep);
+}
+.imm-nav-caret {
+  display: flex;
+  width: 24px;
+  height: 44px;
+  color: var(--chalk);
+}
+.imm-nav-caret[data-open="true"] { color: var(--chalk); }
+.imm-brand:focus-visible,
+.imm-burger:focus-visible,
+.imm-nav-caret:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+.imm-brand:active,
+.imm-nav-link:active,
+.imm-nav-cta:active,
+.imm-nav-caret:active,
+.imm-burger:active { opacity: 0.8; }
+.imm-dropdown { left: -0.9rem; padding-top: 0.4rem; }
+/* State controls visibility so Escape really closes a focused submenu. */
+.imm-header .imm-dropdown[data-open="false"],
+.imm-header .imm-nav-item:focus-within .imm-dropdown[data-open="false"] { display: none; }
+.imm-header .imm-dropdown[data-open="true"] { display: block; }
+.imm-dropdown-inner {
+  padding: 0.6rem;
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--masthead-shadow);
+}
+.imm-dropdown-link {
+  min-height: 44px;
+  padding: 0.75rem;
+  border-radius: 0;
+  font-family: var(--masthead-font);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+@media (max-width: 1000px) {
+  .imm-header-inner { min-height: 6rem; padding: 1.25rem; gap: 1rem; }
+  .imm-brand { font-size: clamp(1.65rem, 4.5vw, 2.25rem); letter-spacing: 0.14em; }
+  .imm-burger { display: flex; flex-shrink: 0; }
+  .imm-header[data-menu-open="true"] { background: var(--green-deep); }
+  .imm-header .imm-nav {
+    display: none;
+    position: absolute;
+    inset: 100% 0 auto;
+    width: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0 1.25rem 1.5rem;
+    background: var(--green-deep);
+    border: 0;
+    backdrop-filter: none;
+    transform: none;
+    transition: none;
+    overflow: visible;
+  }
+  .imm-header .imm-nav[data-open="true"] { display: flex; }
+  .imm-nav-item { border-bottom: 1px solid var(--rule-dark); }
+  .imm-nav-row { justify-content: space-between; }
+  .imm-nav-link { flex: 1; padding: 0.9rem 0; border: 0; font-size: 0.9rem; }
+  .imm-nav-caret { display: flex; width: 44px; height: 44px; flex-shrink: 0; }
+  .imm-header .imm-dropdown { position: static; padding: 0 0 0.5rem; }
+  .imm-dropdown-inner {
+    min-width: 0;
+    width: auto;
+    padding: 0 0 0.5rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .imm-dropdown-link { padding: 0.75rem; color: var(--chalk); font-size: 0.9rem; }
+  .imm-dropdown-link:hover,
+  .imm-dropdown-link[data-active="true"] { background: var(--masthead-hover); color: var(--chalk); }
+  .imm-nav-cta { margin-top: 1rem; padding: 0.85rem 1.25rem; text-align: center; font-size: 1.15rem; align-self: flex-start; }
+}
+
+/* Full-screen photo openings — UVM SSC reference, 2026-10-26.
+ * Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4
+ * Reuse chapter photos and headline tokens; non-photo headers stay compact. */
+.theme-immersive {
+  --page-photo-scrim: linear-gradient(180deg, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0.32) 50%, rgb(0 0 0 / 0.16));
+  --page-photo-shadow: 0 2px 24px rgb(0 0 0 / 0.45);
+}
+.theme-immersive .ewb-shell-head:has(.ewb-shell-bg):not(.spon-hero),
+.theme-immersive .proj-hero,
+.theme-immersive .imm-poster.is-hero {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  max-height: none;
+  aspect-ratio: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-immersive .ewb-shell-head:has(.ewb-shell-bg):not(.spon-hero) > .ewb-wrap,
+.theme-immersive .proj-hero-inner,
+.theme-immersive .imm-poster.is-hero .imm-poster-content {
+  width: 100%;
+  max-width: 90rem;
+  padding: 8rem clamp(1.25rem, 5vw, 5rem);
+  margin-inline: auto;
+  text-align: center;
+  align-items: center;
+}
+.theme-immersive .ewb-shell-head:has(.ewb-shell-bg):not(.spon-hero) h1,
+.theme-immersive .proj-hero-title {
+  font-family: var(--font-headline);
+  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.12;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-width: 24ch;
+  margin: 0 auto;
+  color: var(--chalk);
+  text-shadow: var(--page-photo-shadow);
+}
+.theme-immersive .ewb-shell-head:has(.ewb-shell-bg):not(.spon-hero) .ewb-shell-scrim,
+.theme-immersive .proj-hero-scrim {
+  background: var(--page-photo-scrim);
+}
+.theme-immersive .imm-poster.is-hero .imm-poster-bg {
+  inset: 0;
+}
+@media (max-width: 760px) {
+  .theme-immersive .ewb-shell-head:has(.ewb-shell-bg):not(.spon-hero) h1,
+  .theme-immersive .proj-hero-title {
+    font-size: clamp(2.25rem, 9vw, 4rem);
+    letter-spacing: 0.06em;
+  }
+}
+
+/* Paragraphs and source captions for project-section images. */
+.proj-section-body + .proj-section-body { margin-top: 1rem; }
+.proj-image-caption { margin-top: 0.75rem; font-size: 0.85rem; line-height: 1.5; color: var(--ink-soft); }
+.proj-image-caption a { display: inline-block; color: var(--green-deep); text-decoration: underline; text-underline-offset: 0.2em; }
+.proj-image-caption a:hover { color: var(--ink); }
+.proj-image-caption a:focus-visible { outline: 2px solid var(--green-deep); outline-offset: 3px; }
