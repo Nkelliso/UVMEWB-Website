@@ -146,36 +146,43 @@ export const SEED_PROJECTS: Project[] = [
   },
   {
     slug: "catskills-stormwater",
-    title: "Catskills, New York",
+    title: "Catskill, New York",
     eyebrow: "Domestic Project",
     location: "Catskill, New York",
     status: "Active",
     navLabel: "Domestic Project",
     summary:
-      "Stormwater-mitigation design for the Montessori School of Catskill, New York.",
+      "Stormwater management planning and preliminary design for Catskill Montessori School in Catskill, New York.",
     heroImage: "/photos/site/catskills-domestic-team-field.jpg",
     sections: [
       {
         heading: "Background",
-        body: "We're working on the Montessori School of Catskill, New York, designing stormwater-mitigation systems for the school.",
+        body: "UVM Engineers Without Borders has been working with the Catskill Montessori School to improve the stormwater management on their property. They currently experience flooding and are looking to the future when they might want to expand, which could exacerbate flooding issues. The school serves children 18 months to 18 years old, providing an environmentally rooted education, with a farm on the property. The UVM team has visited twice to the school; the first site assessment in April 2025, and a second in March 2026; these visits provided valuable connection with the leadership at the school and clarified on the scope of the project.",
+        image: "/photos/site/catskill-school-2026.webp",
+        imageAlt: "School building, parking area and open grounds at Catskill Montessori School",
       },
       {
         heading: "Engineering",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Placeholder text, to be filled in by the domestic team.",
+        body: "This project's goal is to provide a Stormwater Pollution Prevention Plan and preliminary design of stormwater practices that would help mitigate any issues on the site currently, and in the future. Developing alternatives that allow the school to add iterations of the project over time, as well as implement some necessary measures. Using HydroCAD to develop hydrographs and model the stormwater, and management practice calculations from the New York Stormwater manual.",
+        image: "/photos/site/catskill-survey-team-2025.webp",
+        imageAlt: "UVM project team with surveying equipment during a rainy visit to Catskill Montessori School",
       },
       {
-        heading: "Our solution",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore. Placeholder text, to be filled in by the domestic team.",
+        heading: "Our Solution",
+        body: "The team has developed alternatives that account for different iterations of the project and of site development. Elements of design include a rain garden, or bioretention cell, or an infiltration basin, and a French drain. These BMPs, or best management practices, are ways to help more water infiltrate into the soil, rather than sit on the surface. One of our primary recommendations is to add gutters and a rainwater collection system onto the largest building on the property.",
+        image: "/photos/site/catskill-bioretention-draft.webp",
+        imageAlt: "Draft bioretention pond plan and cross section showing vegetation, filter media, overflow structure and drainage layers",
+        imageCaption: "Draft bioretention pond design for Catskill Montessori School.",
       },
       {
-        heading: "Community ownership",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Placeholder text, to be filled in by the domestic team.",
+        heading: "Community Connection",
+        body: "After visiting the school multiple times, our team has developed a connection with the leadership at the school, and presented our ideas to a classroom of students. It was important to integrate education into our design; we aim to provide an educational board or plaque explaining what stormwater is, and what these practices are doing in an effort to teach more students about what stormwater and stormwater practices are.",
+        image: "/photos/site/catskill-farm-visit-2025.webp",
+        imageAlt: "UVM team members visiting goats at the school farm",
       },
     ],
-    // Mock structure matching the International page: photo slot beside each
-    // section + a carousel, both labeled until real photos are added in /admin.
-    photoSlots: true,
     gallery: [
+      "/photos/site/catskill-playground-2025.webp",
       "/photos/site/catskills-cad.jpg",
       "/photos/site/catskills-domestic-team-hero.jpg",
     ],

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
-import Placeholder from "@/components/Placeholder";
 import { getOfficers, getSettings } from "@/lib/store";
 import type { Officer } from "@/lib/types";
+import styles from "./officer-board.module.css";
 
 export const metadata: Metadata = {
   title: "Officer Board · EWB UVM",
@@ -11,27 +11,20 @@ export const metadata: Metadata = {
 
 function OfficerCard({ officer }: { officer: Officer }) {
   return (
-    <article className="ewb-officer-card">
-      {officer.photoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={officer.photoUrl}
-          alt={officer.name}
-          style={{
-            width: "100%",
-            height: "8rem",
-            objectFit: "cover",
-            borderRadius: "0.35rem",
-            marginBottom: "0.9rem",
-          }}
-        />
-      ) : (
-        <div style={{ marginBottom: "0.9rem" }}>
-          <Placeholder label="Photo placeholder" height="8rem" />
-        </div>
-      )}
-      <p className="ewb-officer-title">{officer.title}</p>
-      <h3 className="ewb-officer-name">{officer.name}</h3>
+    <article className={styles.person}>
+      <div className={styles.portrait}>
+        {officer.photoUrl ? (
+          // Serve the uploaded original: these portraits do not benefit from more compression.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={officer.photoUrl} alt={officer.name} loading="lazy" decoding="async" />
+        ) : (
+          <div className={styles.missing}>Photo to come</div>
+        )}
+      </div>
+      <div className={styles.caption}>
+        <h3>{officer.name}</h3>
+        <p>{officer.title}</p>
+      </div>
     </article>
   );
 }
@@ -41,50 +34,35 @@ export default async function OfficerBoardPage() {
   const teamPhoto = settings.sectionImages?.team || "/photos/site/team-group.jpg";
 
   return (
-    <PageShell title="Meet our team" narrow={false}>
-      <figure className="ewb-team-photo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={teamPhoto} alt="EWB UVM members together at a UVM event" />
-      </figure>
-      <p className="ewb-note">Current officers as of {board.asOf}.</p>
+    <div className={styles.board}>
+      <PageShell title="Meet our team" narrow={false} image={teamPhoto}>
+        <p className="ewb-note">Current officers as of {board.asOf}.</p>
 
-      <section className="ewb-officer-section">
-        <h2>Faculty Advisor</h2>
-        <div className="ewb-officer-grid is-single">
-          <OfficerCard officer={board.facultyAdvisor} />
-        </div>
-      </section>
-
-      <section className="ewb-officer-section">
-        <h2>Executive Board</h2>
-        <div className="ewb-officer-grid">
-          {board.executiveBoard.map((o) => (
-            <OfficerCard key={`${o.title}-${o.name}`} officer={o} />
-          ))}
-        </div>
-      </section>
-
-      <section className="ewb-officer-section">
-        <h2>Project Directors</h2>
-        {board.projectDirectors.map((group) => (
-          <div key={group.heading}>
-            {group.heading && (
-              <p className="ewb-officer-group-heading">{group.heading}</p>
-            )}
-            <div
-              className={
-                group.officers.length === 1
-                  ? "ewb-officer-grid is-single"
-                  : "ewb-officer-grid"
-              }
-            >
-              {group.officers.map((o) => (
-                <OfficerCard key={`${o.title}-${o.name}`} officer={o} />
-              ))}
-            </div>
+        <section className={styles.section} aria-labelledby="executive-board">
+          <h2 id="executive-board">Executive Board</h2>
+          <div className={styles.grid}>
+            {board.executiveBoard.map((officer) => (
+              <OfficerCard key={`${officer.title}-${officer.name}`} officer={officer} />
+            ))}
           </div>
-        ))}
-      </section>
-    </PageShell>
+        </section>
+
+        <section className={styles.section} aria-labelledby="project-directors">
+          <h2 id="project-directors">Project Directors</h2>
+          <div className={styles.grid}>
+            {board.projectDirectors.flatMap((group) => group.officers.map((officer) => (
+              <OfficerCard key={`${group.heading}-${officer.title}-${officer.name}`} officer={officer} />
+            )))}
+          </div>
+        </section>
+
+        <section className={styles.section} aria-labelledby="faculty-advisor">
+          <h2 id="faculty-advisor">Faculty Advisor</h2>
+          <div className={styles.grid}>
+            <OfficerCard officer={board.facultyAdvisor} />
+          </div>
+        </section>
+      </PageShell>
+    </div>
   );
 }

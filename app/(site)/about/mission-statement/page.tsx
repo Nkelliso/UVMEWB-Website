@@ -13,13 +13,25 @@ export default async function MissionPage() {
     getPageData("mission-statement"),
     getSettings(),
   ]);
+  // The statement carries the emphasis; omit its duplicate section label.
+  const statementData = {
+    ...data,
+    content: data.content.map((block) =>
+      block.type === "RichText" &&
+      (block.props.id === "mission-1" || block.props.heading?.trim().toLowerCase() === "mission statement")
+        ? { ...block, props: { ...block.props, heading: "" } }
+        : block
+    ),
+  };
   return (
     <PageShell
       title="Mission statement"
       narrow={false}
       image={settings.sectionImages?.mission || "/photos/site/rwanda-science-mountain.jpg"}
     >
-      <PageRenderer data={data} />
+      <div className="ewb-mission-copy">
+        <PageRenderer data={statementData} />
+      </div>
     </PageShell>
   );
 }

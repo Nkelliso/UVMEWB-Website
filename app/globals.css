@@ -2797,3 +2797,16 @@ body {
     top: -0.65em;
   }
 }
+/* Let the mission itself lead the body, without a repeated section title. */
+.ewb-mission-copy .ewb-wrap-narrow {
+  max-width: 60rem;
+}
+.ewb-mission-copy .ewb-shell-body p {
+  font-family: var(--font-button), sans-serif;
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-top: 0;
+}
